@@ -45,10 +45,6 @@ const login = new localStrategy(
       if (!isMatched) {
         return done(null, false, { message: "Incorrect Password" });
       }
-
-      req.session.authorized = true;
-      console.log("session after login:", req.session);
-
       return done(null, user);
     } catch (err) {
       return done(err);

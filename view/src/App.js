@@ -1,15 +1,21 @@
 import './App.css';
-import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Navigate, Route } from 'react-router-dom';
+import Register from './components/Register';
+import Login from './components/Login';
+import Catalog from './components/Catalog';
 
-const router = createBrowserRouter(createRoutesFromElements(
-  <Route path="/">
-  </Route>
-));
+
 function App() {
   return (
-    <>
-      <RouterProvider router={router}/>
-    </>
+    <Router>
+      <Routes>
+        <Route path='/' element={<Navigate to='/register'/>} />
+        <Route path='/register' element={ <Register />}/>
+        <Route path='/login' element={<Login />}/>
+        <Route path='/catalog' element={<Catalog />}/>
+      </Routes>
+    </Router>
   );
 }
 
