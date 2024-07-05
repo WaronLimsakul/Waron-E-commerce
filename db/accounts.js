@@ -10,6 +10,31 @@ const pool = new Pool({
 });
 const localStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcrypt");
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+
+const GoogleLogin = new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: process.env.GOOGLE_CALLBACK_URL
+}, async (accessToken, refreshToken, profile, done) => {
+  try {
+    const {id, emails} = profile;
+    const googleEmail = emails[0].value;
+
+    let user = await pool.query("SELECT * FROM accounts WHERE google_id = $1 OR google_email = $2", [id, googleEmail]);
+    if (user.rows.length === 0) {
+      user = await pool.query(
+        "INSERT INTO accounts (google_id, google_email) VALUES ($1 ,$2) RETURNING *", 
+        [id, googleEmail]
+      );
+    } else {
+      user = user.rows[0];
+    }
+    return done(null, user);
+ } catch (err) {
+  return done(err, false);
+ }
+});
 
 const createAccount = async (account) => {
   const { username, password } = account;
@@ -116,4 +141,5 @@ module.exports = {
   checkAuthenticated,
   isOwner,
   isOwnerOfCart,
+  GoogleLogin
 };

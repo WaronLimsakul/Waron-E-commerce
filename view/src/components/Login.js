@@ -80,7 +80,7 @@ const Login = () => {
                         type="submit"
                         variant="contained"
                         size="large"
-                        style={{ margin: 20 }}
+                        style={{ margin: 20, width: "75%" }}
                       >
                         Log in
                       </Button>

@@ -9,7 +9,8 @@ import {
   Typography,
 } from "@mui/material";
 import { Link, useNavigate as UseNavigate } from "react-router-dom";
-import { handleRegister } from "../util";
+import { handleGoogleLogin, handleRegister } from "../util";
+import GoogleIcon from "@mui/icons-material/Google";
 
 function Register() {
   const [username, setUsername] = useState("");
@@ -26,13 +27,7 @@ function Register() {
     <>
       <Grid container>
         <Grid item lg={4} md={3} xs={2}></Grid>
-        <Grid
-          item
-          lg={4}
-          md={6}
-          xs={8}
-          marginTop="5%"
-        >
+        <Grid item lg={4} md={6} xs={8} marginTop="5%">
           <Grid item width="100%" minWidth="500">
             <Card xs={12} elevation={2}>
               <div
@@ -54,7 +49,7 @@ function Register() {
                         id="username"
                         label="Username"
                         variant="filled"
-                        style={{ margin: 10, width: "75%" }}
+                        style={{ margin: "2%", width: "75%" }}
                         onChange={(e) => {
                           setUsername(e.target.value);
                           console.log(e.target.value);
@@ -66,7 +61,7 @@ function Register() {
                         label="Password"
                         type="password"
                         variant="filled"
-                        style={{ margin: 10, width: "75%" }}
+                        style={{ margin: "2%", width: "75%" }}
                         onChange={(e) => {
                           setPassword(e.target.value);
                         }}
@@ -76,9 +71,29 @@ function Register() {
                         type="submit"
                         variant="contained"
                         size="large"
-                        style={{ margin: 20 }}
+                        style={{ margin: "4%", width: "75%" }}
                       >
                         Register
+                      </Button>
+                      <Button
+                        variant="contained"
+                        size="large"
+                        style={{
+                          marginBottom: "2%",
+                          width: "75%",
+                          backgroundColor: "white",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          position: 'relative'
+                        }}
+                        onClick={handleGoogleLogin}
+                      >
+                        {" "}
+                        <GoogleIcon
+                          style={{ position: "absolute", left: '5%' }}
+                        />
+                        Sign up with Google
                       </Button>
                     </Grid>
                   </form>

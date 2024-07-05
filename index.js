@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(
   session({
-    secret: "foS5gMf6Y6",
+    secret: process.env.SESSION_SECRET,
     cookie: { maxAge: 1000 * 60 * 10, secure: false, sameSite: "none" },
     resave: false,
     saveUninitialized: false,
@@ -29,9 +29,15 @@ app.use(passport.session());
 
 passport.use(accounts.login);
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  try {
+    done(null, user.id);
+  } catch (error) {
+    done(error);
+  }
 });
 passport.deserializeUser(accounts.deserializeAccountById);
+passport.use(accounts.GoogleLogin);
+
 
 ////////////////////////////////////////////////////////// login - register -logout
 app.post("/login", (req, res, next) => {
@@ -50,6 +56,15 @@ app.post("/login", (req, res, next) => {
     });
   })(req, res, next);
 });
+
+app.get("/auth/google", passport.authenticate('google', {scope: ['profile', 'email']}));
+
+app.get('/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: `${process.env.FRONTEND_URL}/login` }),
+  (req, res) => {
+    res.redirect(`${process.env.FRONTEND_URL}/catalog`);
+  }
+);
 
 app.post("/register", async (req, res) => {
   try {
@@ -124,6 +139,6 @@ app.get(
 );
 
 ////////////////////////////////////////////////////////// activate server
-app.listen(3001, () => {
+app.listen(process.env.SERVER_PORT, () => {
   console.log("listen to server 3001");
 });

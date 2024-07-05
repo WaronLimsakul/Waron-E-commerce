@@ -23,7 +23,7 @@ export const handleRegister = async (username, password) => {
 
 export const handleLogin = async (username, password) => {
   try {
-    const response = await fetch("http://localhost:3001/login", {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/login`, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
@@ -42,4 +42,8 @@ export const handleLogin = async (username, password) => {
   } catch (error) {
     console.error("Error", error)
   }
+};
+
+export const handleGoogleLogin = () => {
+  window.location.href = `${process.env.REACT_APP_BACKEND_URL}/auth/google`;
 };
