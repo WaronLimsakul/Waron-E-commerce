@@ -3,7 +3,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Navigate, Route } from 'react-router-dom';
 import Register from './components/Register';
 import Login from './components/Login';
-import Catalog from './components/Catalog';
+import Catalog from './components/Catalog page/Catalog';
 
 
 function App() {
