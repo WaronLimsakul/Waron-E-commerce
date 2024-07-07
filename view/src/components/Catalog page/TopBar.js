@@ -7,13 +7,28 @@ import {
   TextField,
   Badge,
   Tooltip,
+  styled,
 } from "@mui/material";
 import Logo from "../../waron-logo-zip-file/png/logo-no-background.png";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import Cart from "@mui/icons-material/ShoppingCart";
 import HistoryIcon from "@mui/icons-material/History";
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+
+const ResponsiveAutocomplete = styled(Autocomplete)(({ theme }) => ({
+  width: "75%",
+  [theme.breakpoints.up("sm")]: {
+    width: "auto",
+  },
+}));
+
+const StyledIconButton = styled(IconButton)(({ theme }) => ({
+  padding: theme.spacing(1),
+}));
 
 const TopBar = () => {
+  const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+  const isVerySmallScreen = useMediaQuery('(max-width:320px)');
   const productsCategories = [
     { label: "Grocery", categoryId: 1 },
     { label: "Pets", categoryId: 2 },
@@ -27,9 +42,6 @@ const TopBar = () => {
     { label: "Automotive", categoryId: 10 },
   ];
   const products = 10;
-  const handleProfileMenu = (e) => {
-
-  };
 
   return (
     <Box>
@@ -39,49 +51,68 @@ const TopBar = () => {
           width="100%"
           height="100"
           justifyContent="space-between"
+          alignItems="center"
+          wrap="nowrap"
+          spacing={1}
         >
-          <Grid item xs={6} height="100%">
+          <Grid item xs={0} sm={0} md={1.5}>
             <Grid container alignItems="center" justifyContent="flex-start">
-              <IconButton size="large" color="inherit" sx={{ mr: "3%", ml:"3%"  }}>
-                <Box
-                  component="img"
-                  sx={{
-                    height: 50,
-                    margin: "6%",
-                  }}
-                  alt="Logo"
-                  src={Logo}
-                />
-              </IconButton>
-              <Autocomplete
+              {!isSmallScreen && (
+                <StyledIconButton
+                  size="large"
+                  color="inherit"
+                  sx={{ mr: "3%", ml: "3%" }}
+                >
+                  <Box
+                    component="img"
+                    sx={{
+                      height: 50,
+                      margin: "6%",
+                    }}
+                    alt="Logo"
+                    src={Logo}
+                  />
+                </StyledIconButton>
+              )}
+            </Grid>
+          </Grid>
+          {!isVerySmallScreen && (
+            <Grid item xs={8} sm={8} md={5}>
+              <ResponsiveAutocomplete
                 disablePortal
                 id="categoryId"
                 options={productsCategories}
-                sx={{ width: "40%" }}
                 renderInput={(params) => (
                   <TextField {...params} label="Product categories" />
                 )}
               />
             </Grid>
-          </Grid>
-          <Grid item xs={6} height="100&">
-            <Grid container alignItems="center" justifyContent="flex-end" height="100%">
-                <Tooltip title="Cart">
-              <IconButton size="large">
-                <Badge badgeContent={products} color="error">
-                <Cart />
-                </Badge>
-              </IconButton>
+          )}
+
+          <Grid item xs={2} sm={4} md={6}>
+            <Grid
+              container
+              alignItems="center"
+              justifyContent="flex-end"
+              height="100%"
+              wrap="nowrap"
+            >
+              <Tooltip title="Cart">
+                <StyledIconButton size="large">
+                  <Badge badgeContent={products} color="error">
+                    <Cart />
+                  </Badge>
+                </StyledIconButton>
               </Tooltip>
               <Tooltip title="Order history">
-              <IconButton size="large">
-                <HistoryIcon />
-              </IconButton>
+                <StyledIconButton size="large">
+                  <HistoryIcon />
+                </StyledIconButton>
               </Tooltip>
-              <Tooltip title="Profile"> 
-              <IconButton size="large" style={{ marginRight: "5%"}} onClick={handleProfileMenu}>
-                <AccountCircleIcon />
-              </IconButton>
+              <Tooltip title="Profile">
+                <StyledIconButton size="large" style={{ marginRight: "5%" }}>
+                  <AccountCircleIcon />
+                </StyledIconButton>
               </Tooltip>
             </Grid>
           </Grid>
