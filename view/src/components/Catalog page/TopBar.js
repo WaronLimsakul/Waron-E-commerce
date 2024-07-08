@@ -24,12 +24,17 @@ const ResponsiveAutocomplete = styled(Autocomplete)(({ theme }) => ({
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
   padding: theme.spacing(1),
+  color: theme.palette.primary.light,
 }));
 
-const TopBar = () => {
+const TopBar = (props) => {
+  const productsInCart = props.productsInCart;
+  const { setSelectedCategory } = props.filter;
+
   const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.down("sm"));
-  const isVerySmallScreen = useMediaQuery('(max-width:320px)');
+  const isVerySmallScreen = useMediaQuery("(max-width:320px)");
   const productsCategories = [
+    { label: "All", categoryId: 0 },
     { label: "Grocery", categoryId: 1 },
     { label: "Pets", categoryId: 2 },
     { label: "Electronics", categoryId: 3 },
@@ -41,7 +46,6 @@ const TopBar = () => {
     { label: "Health & Wellness", categoryId: 9 },
     { label: "Automotive", categoryId: 10 },
   ];
-  const products = 10;
 
   return (
     <Box>
@@ -77,11 +81,21 @@ const TopBar = () => {
             </Grid>
           </Grid>
           {!isVerySmallScreen && (
-            <Grid item xs={8} sm={8} md={5}>
+            <Grid item xs={8} sm={8} md={5} margin="1%">
               <ResponsiveAutocomplete
                 disablePortal
                 id="categoryId"
                 options={productsCategories}
+                isOptionEqualToValue={(option, value) =>
+                  option.categoryId === value.categoryId
+                }
+                onChange={(e, newValue) => {
+                  if (newValue) {
+                    setSelectedCategory(newValue.categoryId);
+                  } else {
+                    setSelectedCategory(0);
+                  }
+                }}
                 renderInput={(params) => (
                   <TextField {...params} label="Product categories" />
                 )}
@@ -99,7 +113,7 @@ const TopBar = () => {
             >
               <Tooltip title="Cart">
                 <StyledIconButton size="large">
-                  <Badge badgeContent={products} color="error">
+                  <Badge badgeContent={productsInCart} color="error">
                     <Cart />
                   </Badge>
                 </StyledIconButton>
