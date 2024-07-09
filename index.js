@@ -88,7 +88,7 @@ app.get("/logout", (req, res) => {
     if (err) {
       return res.status(500).send("error logging out");
     }
-    res.send("logout successful");
+    res.json({message: "logout success"});
   });
 });
 

@@ -10,14 +10,20 @@ import {
   styled,
   Typography,
   Button,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
 } from "@mui/material";
 import Logo from "../../waron-logo-zip-file/png/logo-no-background.png";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Cart from "@mui/icons-material/ShoppingCart";
 import HistoryIcon from "@mui/icons-material/History";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { useEffect, useState } from "react";
-import { fetchUsername } from "../../util";
+import { fetchUsername, handleLogout } from "../../util";
 import { Navigate, Link } from "react-router-dom";
 
 const ResponsiveAutocomplete = styled(Autocomplete)(({ theme }) => ({
@@ -36,6 +42,20 @@ const TopBar = (props) => {
   const productsInCart = props.productsInCart;
   const { setSelectedCategory } = props.filter;
   const [username, setUsename] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleMenu = (e) => {
+    setAnchorEl(e.currentTarget);
+  };
+
+  useEffect(() => {
+    const getUsername = async () => {
+      const fetchedUsername = await fetchUsername();
+      console.log(fetchedUsername);
+      setUsename(fetchedUsername);
+    };
+    getUsername();
+  }, []);
 
   const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.down("sm"));
   const isVerySmallScreen = useMediaQuery("(max-width:320px)");
@@ -52,15 +72,6 @@ const TopBar = (props) => {
     { label: "Health & Wellness", categoryId: 9 },
     { label: "Automotive", categoryId: 10 },
   ];
-
-  useEffect(() => {
-    const getUsername = async () => {
-      const fetchedUsername = await fetchUsername();
-      console.log(fetchedUsername);
-      setUsename(fetchedUsername);
-    };
-    getUsername();
-  }, []);
 
   return (
     <Box>
@@ -130,7 +141,11 @@ const TopBar = (props) => {
                 {username ? (
                   `Hello! ${username}`
                 ) : (
-                  <Link to="/login" color="primary"><Button size="small" color="primary">Please login</Button></Link>
+                  <Link to="/login" color="primary">
+                    <Button size="small" color="primary">
+                      Please login
+                    </Button>
+                  </Link>
                 )}
               </Typography>
               <Tooltip title="Cart">
@@ -145,11 +160,59 @@ const TopBar = (props) => {
                   <HistoryIcon />
                 </StyledIconButton>
               </Tooltip>
-              <Tooltip title="Profile">
-                <StyledIconButton size="large" style={{ marginRight: "5%" }}>
-                  <AccountCircleIcon />
-                </StyledIconButton>
-              </Tooltip>
+
+              {username && (
+                <>
+                  <StyledIconButton
+                    size="large"
+                    style={{ marginRight: "5%" }}
+                    aria-controls="profile-menu"
+                    aria-haspopup="true"
+                    onClick={handleMenu}
+                  >
+                    <AccountCircleIcon />
+                  </StyledIconButton>
+                  <Menu
+                    id="profile-menu"
+                    anchorEl={anchorEl}
+                    keepMounted
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "left",
+                    }}
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "left",
+                    }}
+                    open={Boolean(anchorEl)}
+                    onClose={() => {
+                      setAnchorEl(null);
+                    }}
+                  >
+                    <MenuItem
+                      onClick={() => {
+                        setAnchorEl(null);
+                      }}
+                    >
+                      <ListItemIcon>
+                        <AccountBoxIcon />
+                      </ListItemIcon>
+                      <ListItemText> My account</ListItemText>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={async () => {
+                        await handleLogout();
+                        window.location.reload(); //refresh
+                      }}
+                    >
+                      <ListItemIcon>
+                        <LogoutIcon />
+                      </ListItemIcon>
+                      <ListItemText>Log out</ListItemText>
+                    </MenuItem>
+                  </Menu>
+                </>
+              )}
             </Grid>
           </Grid>
         </Grid>

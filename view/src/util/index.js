@@ -95,3 +95,18 @@ export const fetchProductsFromCategory = async (id) => {
     console.error(err);
   }
 };
+
+export const handleLogout = async () => {
+  try {const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/logout`, {
+    method: "GET",
+    credentials: 'include'
+  })
+  if (response.ok) {
+    const result = await response.json();
+    console.log(result.message);
+  } else {
+    throw new Error('log out fail');
+  }} catch (e) {
+    console.error(e);
+  }
+};
