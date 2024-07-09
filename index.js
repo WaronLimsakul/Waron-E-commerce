@@ -18,7 +18,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
-    cookie: { maxAge: 1000 * 60 * 10, secure: false, sameSite: "none" },
+    cookie: {
+      maxAge: 1000 * 60 * 30,
+      secure: process.env.NODE_ENV === "production", // true in production
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    }, //when samesite: none => must secure : true
     resave: false,
     saveUninitialized: false,
   })
@@ -38,29 +42,34 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser(accounts.deserializeAccountById);
 passport.use(accounts.GoogleLogin);
 
-
 ////////////////////////////////////////////////////////// login - register -logout
 app.post("/login", (req, res, next) => {
-  passport.authenticate('local', (err, user, info) => {
+  passport.authenticate("local", (err, user, info) => {
     if (err) {
-      return res.status(500).json({ message: 'Internal server error' });
+      return res.status(500).json({ message: "Internal server error" });
     }
     if (!user) {
       return res.status(400).json({ message: info.message });
     }
     req.login(user, (err) => {
       if (err) {
-        return res.status(500).json({ message: 'Login failed' });
+        return res.status(500).json({ message: "Login failed" });
       }
-      res.json({ message: 'Login successful' });
+      res.json({ message: "Login successful" }); // still not deserialize yet
     });
   })(req, res, next);
 });
 
-app.get("/auth/google", passport.authenticate('google', {scope: ['profile', 'email']}));
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
 
-app.get('/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: `${process.env.FRONTEND_URL}/login` }),
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: `${process.env.FRONTEND_URL}/login`,
+  }),
   (req, res) => {
     res.redirect(`${process.env.FRONTEND_URL}/catalog`);
   }
@@ -81,6 +90,11 @@ app.get("/logout", (req, res) => {
     }
     res.send("logout successful");
   });
+});
+
+app.get("/user", accounts.checkAuthenticated, (req, res) => {
+  console.log("Session:", req.session); // Log session data
+  res.json({ username: req.user.username });
 });
 
 ////////////////////////////////////////////////////////// endpoint part

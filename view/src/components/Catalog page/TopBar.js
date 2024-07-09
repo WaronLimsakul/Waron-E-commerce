@@ -8,12 +8,17 @@ import {
   Badge,
   Tooltip,
   styled,
+  Typography,
+  Button,
 } from "@mui/material";
 import Logo from "../../waron-logo-zip-file/png/logo-no-background.png";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Cart from "@mui/icons-material/ShoppingCart";
 import HistoryIcon from "@mui/icons-material/History";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useEffect, useState } from "react";
+import { fetchUsername } from "../../util";
+import { Navigate, Link } from "react-router-dom";
 
 const ResponsiveAutocomplete = styled(Autocomplete)(({ theme }) => ({
   width: "75%",
@@ -30,6 +35,7 @@ const StyledIconButton = styled(IconButton)(({ theme }) => ({
 const TopBar = (props) => {
   const productsInCart = props.productsInCart;
   const { setSelectedCategory } = props.filter;
+  const [username, setUsename] = useState(null);
 
   const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.down("sm"));
   const isVerySmallScreen = useMediaQuery("(max-width:320px)");
@@ -46,6 +52,15 @@ const TopBar = (props) => {
     { label: "Health & Wellness", categoryId: 9 },
     { label: "Automotive", categoryId: 10 },
   ];
+
+  useEffect(() => {
+    const getUsername = async () => {
+      const fetchedUsername = await fetchUsername();
+      console.log(fetchedUsername);
+      setUsename(fetchedUsername);
+    };
+    getUsername();
+  }, []);
 
   return (
     <Box>
@@ -111,6 +126,13 @@ const TopBar = (props) => {
               height="100%"
               wrap="nowrap"
             >
+              <Typography variant="body1" marginRight="1%">
+                {username ? (
+                  `Hello! ${username}`
+                ) : (
+                  <Link to="/login" color="primary"><Button size="small" color="primary">Please login</Button></Link>
+                )}
+              </Typography>
               <Tooltip title="Cart">
                 <StyledIconButton size="large">
                   <Badge badgeContent={productsInCart} color="error">

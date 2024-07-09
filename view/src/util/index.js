@@ -27,14 +27,16 @@ export const handleLogin = async (username, password) => {
   try {
     const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/login`, {
       method: "POST",
+      credentials: 'include',
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ username, password })
     });
     const result = await response.json();
     if (response.ok) {
       console.log(result.message);
+      console.log(result.user);
       return { message: result.message, authenticate: true }; // Login success!
     } else {
       console.log(result.message);
@@ -63,11 +65,31 @@ export const fetchAllProducts = async () => {
   }
 };
 
+export const fetchUsername = async () => {
+  try {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/user`, {
+      method: "GET",
+      credentials: "include",
+    });
+    if (response.ok) {
+      const result = await response.json();
+      return result["username"];
+    } else {
+      console.error("Failed to fetch user", response.statusText);
+    }
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 export const fetchProductsFromCategory = async (id) => {
   try {
-    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/products?categoryId=${id}`, {
-      method: "GET",
-    });
+    const response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/products?categoryId=${id}`,
+      {
+        method: "GET",
+      }
+    );
     return response.json();
   } catch (err) {
     console.error(err);
