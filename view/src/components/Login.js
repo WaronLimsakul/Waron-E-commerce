@@ -60,6 +60,7 @@ const Login = () => {
                         label="Username"
                         variant="filled"
                         style={{ margin: 10, width: "75%" }}
+                        value={username}
                         onChange={(e) => {
                           setUsername(e.target.value);
                         }}
@@ -71,6 +72,7 @@ const Login = () => {
                         type="password"
                         variant="filled"
                         style={{ margin: 10, width: "75%" }}
+                        value={password}
                         onChange={(e) => {
                           setPassword(e.target.value);
                         }}
