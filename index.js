@@ -88,13 +88,13 @@ app.get("/logout", (req, res) => {
     if (err) {
       return res.status(500).send("error logging out");
     }
-    res.json({message: "logout success"});
+    res.json({ message: "logout success" });
   });
 });
 
 app.get("/user", accounts.checkAuthenticated, (req, res) => {
   console.log("Session:", req.session); // Log session data
-  res.json({ username: req.user.username });
+  res.json({ username: req.user.username, id: req.user.id });
 });
 
 ////////////////////////////////////////////////////////// endpoint part
@@ -131,6 +131,12 @@ app.get(
   accounts.checkAuthenticated,
   accounts.isOwner,
   db.getCart
+);
+app.get(
+  "/accounts/:id/cart/detail", //id in this case means cart id
+  accounts.checkAuthenticated,
+  accounts.isOwnerOfCart,
+  db.getCartDetail
 );
 app.post("/cart", accounts.checkAuthenticated, db.createCart);
 app.post(

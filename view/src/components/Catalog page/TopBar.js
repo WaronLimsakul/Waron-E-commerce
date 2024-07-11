@@ -23,8 +23,9 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useEffect, useState } from "react";
-import { fetchUsername, handleLogout } from "../../util";
+import { getCartDetail, handleLogout } from "../../util";
 import { Navigate, Link } from "react-router-dom";
+import CartDetail from "./CartDetail";
 
 const ResponsiveAutocomplete = styled(Autocomplete)(({ theme }) => ({
   width: "75%",
@@ -40,22 +41,34 @@ const StyledIconButton = styled(IconButton)(({ theme }) => ({
 
 const TopBar = (props) => {
   const productsInCart = props.productsInCart;
+  const userInfo = props.userInfo;
+  const cartId = props.cartId;
   const { setSelectedCategory } = props.filter;
-  const [username, setUsename] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [openCart, setOpenCart] = useState(false);
+  const [cartDetailArray, setCartDetailArray] = useState(null);
+
+  const fetchCartDetail = async () => {
+    const cartDetailRows = await getCartDetail(cartId);
+    setCartDetailArray(cartDetailRows);
+  };
+  useEffect(() => {
+    if (!cartId) return;
+    fetchCartDetail();
+  }, [cartId]);
 
   const handleMenu = (e) => {
     setAnchorEl(e.currentTarget);
   };
 
-  useEffect(() => {
-    const getUsername = async () => {
-      const fetchedUsername = await fetchUsername();
-      console.log(fetchedUsername);
-      setUsename(fetchedUsername);
-    };
-    getUsername();
-  }, []);
+  const handleOpen = () => {
+    // fetch cart detail
+    fetchCartDetail()
+    setOpenCart(true);
+  };
+  const handleClose = () => {
+    setOpenCart(false);
+  };
 
   const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.down("sm"));
   const isVerySmallScreen = useMediaQuery("(max-width:320px)");
@@ -138,8 +151,8 @@ const TopBar = (props) => {
               wrap="nowrap"
             >
               <Typography variant="body1" marginRight="1%">
-                {username ? (
-                  `Hello! ${username}`
+                {userInfo ? (
+                  `Hello! ${userInfo.username}`
                 ) : (
                   <Link to="/login" color="primary">
                     <Button size="small" color="primary">
@@ -148,21 +161,20 @@ const TopBar = (props) => {
                   </Link>
                 )}
               </Typography>
-              <Tooltip title="Cart">
-                <StyledIconButton size="large">
-                  <Badge badgeContent={productsInCart} color="error">
-                    <Cart />
-                  </Badge>
-                </StyledIconButton>
-              </Tooltip>
-              <Tooltip title="Order history">
-                <StyledIconButton size="large">
-                  <HistoryIcon />
-                </StyledIconButton>
-              </Tooltip>
-
-              {username && (
+              {userInfo && (
                 <>
+                  <Tooltip title="Cart">
+                    <StyledIconButton size="large" onClick={handleOpen}>
+                      <Badge badgeContent={productsInCart} color="error">
+                        <Cart />
+                      </Badge>
+                    </StyledIconButton>
+                  </Tooltip>
+                  <Tooltip title="Order history">
+                    <StyledIconButton size="large">
+                      <HistoryIcon />
+                    </StyledIconButton>
+                  </Tooltip>
                   <StyledIconButton
                     size="large"
                     style={{ marginRight: "5%" }}
@@ -217,6 +229,11 @@ const TopBar = (props) => {
           </Grid>
         </Grid>
       </AppBar>
+      <CartDetail
+        open={openCart}
+        onClose={handleClose}
+        cartDetailArray={cartDetailArray ? cartDetailArray : []}
+      />
     </Box>
   );
 };

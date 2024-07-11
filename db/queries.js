@@ -64,8 +64,13 @@ const updateAccountById = async (req, res) => {
         [address, id]
       );
     }
-    const updatedAccount = await pool.query("SELECT * FROM accounts_detail WHERE account_id = $1", [id]);
-    res.status(201).json({message: "update success!", detail:updatedAccount.rows[0]} );
+    const updatedAccount = await pool.query(
+      "SELECT * FROM accounts_detail WHERE account_id = $1",
+      [id]
+    );
+    res
+      .status(201)
+      .json({ message: "update success!", detail: updatedAccount.rows[0] });
   } catch (err) {
     res.status(500).send("error updating accounts");
   }
@@ -133,21 +138,47 @@ const calculateTotalPrice = async (cartId) => {
 const getCart = async (req, res) => {
   const accountId = parseInt(req.params.id);
   try {
-    const cart = await pool.query("SELECT * FROM carts WHERE account_id = $1 AND checked_out = false", [
-      accountId,
-    ]);
+    const cart = await pool.query(
+      "SELECT * FROM carts WHERE account_id = $1 AND checked_out = false",
+      [accountId]
+    );
     // const cartProducts = await pool.query(
     //   "SELECT product_id, quantity FROM products_carts WHERE cart_id = $1",
     //   [cart.rows[0].id]
     // );
     console.log("cart found:", cart.rows.length);
     if (cart.rows.length == 0) {
-      return res.status(404).send("cart not found");
+      return res
+        .status(404)
+        .json({ message: "cart not found", statusCode: 404 });
     }
     res.json(cart.rows[0]);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Internal server error");
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const getCartDetail = async (req, res) => {
+  const cartId = req.params.id;
+  try {
+    const cartDetail = await pool.query(`
+      WITH carts_products AS (
+        SELECT product_id, quantity, total_price 
+        FROM carts JOIN products_carts ON products_carts.cart_id = carts.id 
+        WHERE id = $1
+      ) 
+      SELECT product_id,	quantity,	total_price, name,	price 
+      FROM carts_products 
+      JOIN products 
+      ON carts_products.product_id = products.id;`, [cartId]);
+    // if (cartDetail.rows.length === 0) {
+    //   res.status(404).json({message: "cart's detail not found"})
+    // }
+    res.status(200).json(cartDetail.rows);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({message: "internal server error"});
   }
 };
 
@@ -170,12 +201,12 @@ const createCart = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Internal server error" });
-    throw err
+    throw err;
   }
 };
 
 const updateCart = async (req, res) => {
-  const cartId = parseInt(req.params.id);
+  const cartId = parseInt(req.params.id); // NO, how they suppose to know the cart id?
   const { productId, quantity } = req.body;
 
   try {
@@ -188,10 +219,14 @@ const updateCart = async (req, res) => {
         "UPDATE products_carts SET quantity = quantity + $1, updated_at = NOW() WHERE cart_id = $2 AND product_id = $3 RETURNING *",
         [quantity, cartId, productId]
       );
+      const totalUnits = await pool.query(
+        "SELECT SUM(quantity) AS total_units FROM products_carts WHERE cart_id = $1",
+        [cartId]
+      );
       const totalPrice = await calculateTotalPrice(cartId);
       const cartNow = await pool.query(
-        "UPDATE carts SET total_price = $1 WHERE id = $2 RETURNING id, updated_at, total_price",
-        [totalPrice, cartId]
+        "UPDATE carts SET total_price = $1, total_units = $2 WHERE id = $3 RETURNING id, updated_at, total_price, total_units",
+        [totalPrice, totalUnits.rows[0].total_units, cartId]
       );
       return res
         .status(200)
@@ -202,9 +237,13 @@ const updateCart = async (req, res) => {
       [cartId, productId, quantity]
     );
     const totalPrice = await calculateTotalPrice(cartId);
+    const totalUnits = await pool.query(
+      "SELECT SUM(quantity) AS total_units FROM products_carts WHERE cart_id = $1",
+      [cartId]
+    );
     const cartNow = await pool.query(
-      "UPDATE carts SET total_price = $1 WHERE id = $2 RETURNING id, updated_at, total_price",
-      [totalPrice, cartId]
+      "UPDATE carts SET total_price = $1, total_units = $2 WHERE id = $3 RETURNING id, updated_at, total_price, total_units",
+      [totalPrice, totalUnits.rows[0].total_units, cartId]
     );
     res.status(201).json({ cart: cartNow.rows[0], detail: newProduct.rows[0] });
   } catch (err) {
@@ -224,8 +263,8 @@ const checkout = async (req, res) => {
       "SELECT * FROM carts WHERE id = $1 AND account_id = $2 AND checked_out = false",
       [cartId, accountId]
     );
-    console.log('cart id :', cartId);
-    console.log('account id:', accountId);
+    console.log("cart id :", cartId);
+    console.log("account id:", accountId);
     if (cart.rows.length == 0) {
       return res
         .status(404)
@@ -261,12 +300,12 @@ const checkout = async (req, res) => {
     // send products in cart to order
     for (const product of cartProducts.rows) {
       await pool.query(
-        `INSERT INTO products_orders (product_id, order_id, quantity) VALUES ($1, $2, $3)`,
-        [product.product_id, newOrder.id, product.quantity]
+        `INSERT INTO products_orders (product_id, order_id, quantity, account_id) VALUES ($1, $2, $3)`,
+        [product.product_id, newOrder.id, product.quantity, accountId]
       );
     }
     // respond woohoo
-    res.status(200).json({message: "successful order", newOrder});
+    res.status(200).json({ message: "successful order", newOrder });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "INternal server error" });
@@ -297,9 +336,13 @@ const getOrderById = (req, res) => {
 };
 
 const getOrderHistory = async (req, res) => {
+  // not complete, not telling products or amount
   const accountId = parseInt(req.user.id);
   try {
-    const orderResult = await pool.query("SELECT * FROM orders WHERE account_id = $1 ORDER BY order_date", [accountId]);
+    const orderResult = await pool.query(
+      "SELECT * FROM orders WHERE account_id = $1 ORDER BY order_date",
+      [accountId]
+    );
     if (orderResult.rows.length == 0) {
       return res.send("No order found");
     }
@@ -307,7 +350,7 @@ const getOrderHistory = async (req, res) => {
     res.json(orderHistory);
   } catch (err) {
     console.error(err);
-    res.status(500).json({error: "internal server error"});
+    res.status(500).json({ error: "internal server error" });
   }
 };
 
@@ -320,6 +363,7 @@ module.exports = {
   getAllAccounts,
   updateAccountById,
   getCart,
+  getCartDetail,
   createCart,
   updateCart,
   getOrderById,

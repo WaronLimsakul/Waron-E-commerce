@@ -27,11 +27,11 @@ export const handleLogin = async (username, password) => {
   try {
     const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/login`, {
       method: "POST",
-      credentials: 'include',
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ username, password }),
     });
     const result = await response.json();
     if (response.ok) {
@@ -65,7 +65,7 @@ export const fetchAllProducts = async () => {
   }
 };
 
-export const fetchUsername = async () => {
+export const fetchUser = async () => {
   try {
     const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/user`, {
       method: "GET",
@@ -73,7 +73,7 @@ export const fetchUsername = async () => {
     });
     if (response.ok) {
       const result = await response.json();
-      return result["username"];
+      return { username: result.username, id: result.id };
     } else {
       console.error("Failed to fetch user", response.statusText);
     }
@@ -97,16 +97,104 @@ export const fetchProductsFromCategory = async (id) => {
 };
 
 export const handleLogout = async () => {
-  try {const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/logout`, {
-    method: "GET",
-    credentials: 'include'
-  })
-  if (response.ok) {
-    const result = await response.json();
-    console.log(result.message);
-  } else {
-    throw new Error('log out fail');
-  }} catch (e) {
+  try {
+    const response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/logout`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    );
+    if (response.ok) {
+      const result = await response.json();
+      console.log(result.message);
+    } else {
+      throw new Error("log out fail");
+    }
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+export const getCartInCatalog = async (id) => {
+  try {
+    const response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/accounts/${id}/cart`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    );
+    if (response.ok) {
+      const cart = await response.json();
+      return cart;
+    } else if (response.status === 404) {
+      return null;
+    } else {
+      console.err("fail to get cart");
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const createCartInCatalog = async () => {
+  try {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/cart`, {
+      method: "POST",
+      credentials: "include",
+    });
+    if (response.ok) {
+      const newCart = await response.json();
+      return newCart;
+    } else {
+      console.error("failed to create cart");
+    }
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+export const addItemToCart = async (cartId, productId, quantity) => {
+  try {
+    const response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/cart/${cartId}`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ productId, quantity }),
+      }
+    );
+    if (response.ok) {
+      const result = await response.json();
+      return result.detail;
+    } else {
+      console.error("failed to add Item");
+    }
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+export const getCartDetail = async (cartId) => {
+  // fetch from new route that will join producst and products_carts
+  try {
+    const response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/accounts/${cartId}/cart/detail`,
+      { method: "GET",
+        credentials: "include",
+      }
+    );
+    if (response.ok) {
+      const cartDetail = await response.json();
+      return cartDetail
+    } else {
+      console.error(response.error);
+    }
+  } catch (e) {
     console.error(e);
   }
 };

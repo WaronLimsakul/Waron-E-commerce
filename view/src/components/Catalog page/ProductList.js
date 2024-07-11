@@ -16,18 +16,9 @@ const ProductList = (props) => {
       picture_url:
         "https://i.pinimg.com/736x/ef/8c/23/ef8c23bb773239fb665f9dcfff8a6517.jpg",
     },
-    {
-      id: 2,
-      name: "T-shirt",
-      price: 10.0,
-      stock: 100,
-      description: "cotton T-shirt with logo",
-      picture_url:
-        "https://www.shoei-europe.com/shop/media/image/1f/b5/61/X-Logo-T-Shirt-White-1.png",
-      category_id: 1,
-    },
   ]; // have to get from server
   const productsArray = props.productsArray;
+  
 
   const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -66,6 +57,7 @@ const ProductList = (props) => {
         product={selectedProduct}
         productsInCart={props.productsInCart}
         setProductsInCart={props.setProductsInCart}
+        cartId={props.cartId}
       />
     </Box>
   );

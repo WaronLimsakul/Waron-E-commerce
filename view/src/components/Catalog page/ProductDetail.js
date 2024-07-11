@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import CloseIcon from '@mui/icons-material/Close';
+import { addItemToCart } from "../../util";
 
 const ProductDetail = ({
   open,
@@ -18,12 +19,16 @@ const ProductDetail = ({
   product,
   setProductsInCart,
   productsInCart,
+  // userid , cartid, quantity
+  cartId
 }) => {
   const [quantity, setQuantity] = useState(0);
   if (!product) return null;
-  const { name, price, description, picture_url } = product;
-  const handleAddToCart = () => {
+  const {id, name, price, description, picture_url } = product;
+  const handleAddToCart = async () => {
     if (quantity > 0) {
+      const response = await addItemToCart(cartId, id, quantity); // this is detail
+      console.log(response);
       setProductsInCart(productsInCart + quantity);
       setQuantity(0);
       onClose();

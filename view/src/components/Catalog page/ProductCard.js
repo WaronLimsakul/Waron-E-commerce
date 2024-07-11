@@ -1,31 +1,20 @@
 import {
   Box,
-  Button,
-  ButtonGroup,
   Card,
   CardActionArea,
-  CardActions,
   CardContent,
   CardMedia,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React from "react";
 
 const ProductCard = (props) => {
-  const { id, name, price, description, picture_url } = props.productInfo;
-  // const setProductsInCart = props.setProductsInCart;
-  // const productsInCart = props.productsInCart;
+  const { name, price, picture_url } = props.productInfo;
+
   const onClick = props.onClick;
-  // const [quantity, setQuantity] = useState(0);
-  // const handleAddToCart = () => {
-  //   if (quantity > 0) {
-  //     setProductsInCart(productsInCart + quantity);
-  //     setQuantity(0);
-  //   }
-  // };
+
   return (
     <>
-      {/* <Grid item sm={6} md={4} lg={3}> */}
       <Card sx={{ maxWidth: 350, minHeight: "220px" }}>
         <CardActionArea onClick={onClick}>
           <Box
@@ -38,7 +27,6 @@ const ProductCard = (props) => {
               title={name}
             />
           </Box>
-
           <CardContent>
             <Box
               sx={{
@@ -62,76 +50,9 @@ const ProductCard = (props) => {
                 ${price}{" "}
               </Typography>
             </Box>
-            {/* <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
-            >
-              {description}
-            </Typography> */}
           </CardContent>
         </CardActionArea>
-        {/* <CardActions
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            marginBottom: "1%",
-            marginLeft: "2%",
-            flexWrap: "wrap",
-            gap: 1,
-          }}
-        >
-          <ButtonGroup
-            size="small"
-            sx={{ marginBottom: { xs: "0.5rem", sm: "0" } }}
-          >
-            <Button
-              variant="contained"
-              onClick={() => {
-                if (quantity > 0) {
-                  setQuantity(quantity - 1);
-                }
-              }}
-              sx={{ fontSize: { xs: "0.7rem", sm: "0.875rem" } }}
-            >
-              <b>-</b>
-            </Button>
-            <Button
-              variant="outlined"
-              disabled
-              style={{
-                color: "white",
-                fontSize: { xs: "0.7rem", sm: "0.875rem" },
-              }}
-            >
-              {quantity}
-            </Button>
-            <Button
-              variant="contained"
-              onClick={() => {
-                setQuantity(quantity + 1);
-              }}
-              sx={{ fontSize: { xs: "0.7rem", sm: "0.875rem" } }}
-            >
-              <b>+</b>
-            </Button>
-          </ButtonGroup>
-          <Button
-            variant="contained"
-            size="small"
-            onClick={handleAddToCart}
-            sx={{
-              fontSize: { xs: "0.7rem", sm: "0.875rem" },
-              width: { xs: "100%", sm: "auto" },
-              mt: { xs: 1, sm: 0 },
-            }}
-          >
-            Add to cart
-          </Button>
-        </CardActions> */}
       </Card>
-      {/* </Grid> */}
     </>
   );
 };
