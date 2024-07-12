@@ -145,6 +145,7 @@ app.post(
   accounts.isOwnerOfCart,
   db.updateCart
 );
+app.delete("/cart/:id", accounts.checkAuthenticated, accounts.isOwnerOfCart, db.removeItem); //cart id (body contain product id then)
 
 //////////////////checkout = carts + orders
 app.post("/cart/:id/checkout", accounts.checkAuthenticated, db.checkout);

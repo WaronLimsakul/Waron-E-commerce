@@ -11,8 +11,10 @@ import {
 } from "@mui/material";
 import React from "react";
 import CloseIcon from "@mui/icons-material/Close";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-const CartDetail = ({ open, onClose, cartDetailArray }) => {
+const CartDetail = ({ open, onClose, cartDetailArray, handleDeleteItem,fetchCartDetail, cartId }) => {
+  
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
@@ -41,7 +43,15 @@ const CartDetail = ({ open, onClose, cartDetailArray }) => {
             </Box>
             <List>
               {cartDetailArray.map((detail) => (
-                <ListItem key={detail.product_id} alignItems="flex-start">
+                <ListItem
+                  key={detail.product_id}
+                  alignItems="flex-start"
+                  secondaryAction={
+                    <IconButton edge="end" onClick={() => {handleDeleteItem(cartId, detail.product_id)}}>
+                      <DeleteIcon />
+                    </IconButton>
+                  }
+                >
                   <ListItemText
                     primary={detail.name}
                     secondary={

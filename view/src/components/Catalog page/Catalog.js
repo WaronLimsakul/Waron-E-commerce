@@ -34,26 +34,33 @@ const Catalog = () => {
     getUser();
   }, []);
 
+  const getCart = async () => {
+    try {let cart = await getCartInCatalog(userInfo.id);
+    if (!cart) {
+       cart = await createCartInCatalog(userInfo.id);
+    }
+    setActiveCart(cart);
+    setProductsInCart(cart.total_units);} 
+    catch (e) {
+      console.error("error fetching or creating cart", e);
+    }
+  };
+
   useEffect(() => {
     if (!userInfo) return
-    const getCart = async () => {
-      try {let cart = await getCartInCatalog(userInfo.id);
-      if (!cart) {
-         cart = await createCartInCatalog(userInfo.id);
-      }
-      setActiveCart(cart);
-      setProductsInCart(cart.total_units);} 
-      catch (e) {
-        console.error("error fetching or creating cart", e);
-      }
-    };
-    getCart()
+    getCart();
   }, [userInfo]);
 
 
   return (
     <>
-      <TopBar productsInCart={productsInCart} filter={{selectedCategory, setSelectedCategory}} userInfo={userInfo} cartId={activeCart ? activeCart.id : null}/>
+      <TopBar 
+        productsInCart={productsInCart} 
+        filter={{selectedCategory, setSelectedCategory}} 
+        userInfo={userInfo} 
+        cartId={activeCart ? activeCart.id : null}
+        getCart={getCart}
+      />
       <ProductList
         productsInCart={productsInCart}
         setProductsInCart={setProductsInCart}

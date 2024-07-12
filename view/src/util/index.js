@@ -184,15 +184,37 @@ export const getCartDetail = async (cartId) => {
   try {
     const response = await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/accounts/${cartId}/cart/detail`,
-      { method: "GET",
-        credentials: "include",
-      }
+      { method: "GET", credentials: "include" }
     );
     if (response.ok) {
       const cartDetail = await response.json();
-      return cartDetail
+      return cartDetail;
     } else {
       console.error(response.error);
+    }
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+export const removeItem = async (cartId, productId) => {
+  try {
+    console.log(`Remove item process, cartId: ${cartId}, productId: ${productId}`);
+    const response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/cart/${cartId}`,
+      {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({productId}),
+      }
+    );
+    if (response.ok) {
+      return response.cart;
+    } else {
+      console.error("failed removing item")
     }
   } catch (e) {
     console.error(e);

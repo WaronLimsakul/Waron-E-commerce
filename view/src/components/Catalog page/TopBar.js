@@ -23,8 +23,8 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useEffect, useState } from "react";
-import { getCartDetail, handleLogout } from "../../util";
-import { Navigate, Link } from "react-router-dom";
+import { getCartDetail, handleLogout, removeItem } from "../../util";
+import { Link } from "react-router-dom";
 import CartDetail from "./CartDetail";
 
 const ResponsiveAutocomplete = styled(Autocomplete)(({ theme }) => ({
@@ -43,32 +43,47 @@ const TopBar = (props) => {
   const productsInCart = props.productsInCart;
   const userInfo = props.userInfo;
   const cartId = props.cartId;
+  const getCart = props.getCart;
   const { setSelectedCategory } = props.filter;
   const [anchorEl, setAnchorEl] = useState(null);
   const [openCart, setOpenCart] = useState(false);
-  const [cartDetailArray, setCartDetailArray] = useState(null);
+  const [cartDetailArray, setCartDetailArray] = useState([]);
 
   const fetchCartDetail = async () => {
-    const cartDetailRows = await getCartDetail(cartId);
-    setCartDetailArray(cartDetailRows);
+    try {
+      const cartDetailRows = await getCartDetail(cartId);
+      setCartDetailArray(cartDetailRows);
+    } catch (error) {
+      console.error('Error fetching cart details:', error);
+    }
   };
   useEffect(() => {
-    if (!cartId) return;
+    if (!cartId) return
     fetchCartDetail();
   }, [cartId]);
+  const handleDeleteItem = async (cartId, productId) => {
+    try {
+      await removeItem(cartId, productId);
+      await fetchCartDetail();
+      getCart();
+    } catch (error) {
+      console.error('Error removing item from cart:', error);
+    }
+  };
 
   const handleMenu = (e) => {
     setAnchorEl(e.currentTarget);
   };
-
   const handleOpen = () => {
     // fetch cart detail
-    fetchCartDetail()
+    fetchCartDetail();
     setOpenCart(true);
   };
   const handleClose = () => {
     setOpenCart(false);
   };
+  
+  
 
   const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.down("sm"));
   const isVerySmallScreen = useMediaQuery("(max-width:320px)");
@@ -232,7 +247,10 @@ const TopBar = (props) => {
       <CartDetail
         open={openCart}
         onClose={handleClose}
-        cartDetailArray={cartDetailArray ? cartDetailArray : []}
+        cartDetailArray={cartDetailArray}
+        fetchCartDetail={fetchCartDetail}
+        handleDeleteItem={handleDeleteItem}
+        cartId={cartId}
       />
     </Box>
   );

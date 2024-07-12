@@ -162,7 +162,8 @@ const getCart = async (req, res) => {
 const getCartDetail = async (req, res) => {
   const cartId = req.params.id;
   try {
-    const cartDetail = await pool.query(`
+    const cartDetail = await pool.query(
+      `
       WITH carts_products AS (
         SELECT product_id, quantity, total_price 
         FROM carts JOIN products_carts ON products_carts.cart_id = carts.id 
@@ -171,14 +172,16 @@ const getCartDetail = async (req, res) => {
       SELECT product_id,	quantity,	total_price, name,	price 
       FROM carts_products 
       JOIN products 
-      ON carts_products.product_id = products.id;`, [cartId]);
+      ON carts_products.product_id = products.id;`,
+      [cartId]
+    );
     // if (cartDetail.rows.length === 0) {
     //   res.status(404).json({message: "cart's detail not found"})
     // }
     res.status(200).json(cartDetail.rows);
   } catch (e) {
     console.error(e);
-    res.status(500).json({message: "internal server error"});
+    res.status(500).json({ message: "internal server error" });
   }
 };
 
@@ -252,6 +255,33 @@ const updateCart = async (req, res) => {
     throw err;
   }
 };
+
+const removeItem = async (req, res) => {
+  // carts updated at, total price, total units
+  // products_carts delete a whole row
+  try {
+    const cartId = parseInt(req.params.id);
+    const { productId } = req.body;
+    const deletedProduct = await pool.query(
+      "DELETE FROM products_carts WHERE product_id = $1 AND cart_id = $2 RETURNING quantity",
+      [productId, cartId]
+    );
+    if (deletedProduct.rows.length === 0) {
+      res.status(404).json({ message: "cart or product not found" });
+    }
+    const deletedQuantity = deletedProduct.rows[0].quantity; //not sure
+    const newTotalPrice = await calculateTotalPrice(cartId);
+    const cartNow = await pool.query(
+      "UPDATE carts SET updated_at = NOW(), total_price = $1, total_units = total_units - $2 WHERE id = $3 AND checked_out = false RETURNING *",
+      [newTotalPrice, deletedQuantity, cartId]
+    );
+    res.status(200).json({ cart: cartNow.rows[0] }); //if 204, you can't send json response
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Failed removing item: internal server error");
+  }
+};
+
 ////////////////////////////////////////////////// Checkout
 
 const checkout = async (req, res) => {
@@ -366,6 +396,7 @@ module.exports = {
   getCartDetail,
   createCart,
   updateCart,
+  removeItem,
   getOrderById,
   getAllOrders,
   getOrderHistory,
