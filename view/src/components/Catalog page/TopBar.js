@@ -47,7 +47,7 @@ const TopBar = (props) => {
   const { setSelectedCategory } = props.filter;
   const [anchorEl, setAnchorEl] = useState(null);
   const [openCart, setOpenCart] = useState(false);
-  const [cartDetailArray, setCartDetailArray] = useState([]);
+  const [cartDetailArray, setCartDetailArray] = useState(null);
 
   const fetchCartDetail = async () => {
     try {
@@ -61,6 +61,7 @@ const TopBar = (props) => {
     if (!cartId) return
     fetchCartDetail();
   }, [cartId]);
+  
   const handleDeleteItem = async (cartId, productId) => {
     try {
       await removeItem(cartId, productId);
@@ -247,7 +248,7 @@ const TopBar = (props) => {
       <CartDetail
         open={openCart}
         onClose={handleClose}
-        cartDetailArray={cartDetailArray}
+        cartDetailArray={cartDetailArray ? cartDetailArray : []}
         fetchCartDetail={fetchCartDetail}
         handleDeleteItem={handleDeleteItem}
         cartId={cartId}

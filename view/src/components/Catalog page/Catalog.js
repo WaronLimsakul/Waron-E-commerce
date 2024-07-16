@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import TopBar from "./TopBar";
 import ProductList from "./ProductList";
-import { createCartInCatalog, fetchAllProducts, fetchProductsFromCategory, fetchUser, getCartInCatalog } from "../../util";
+import {  fetchAllProducts, fetchProductsFromCategory } from "../../util";
+import { UserContext } from "../UserContext";
 
 const Catalog = () => {
   const [productsArray, setProductsArray] = useState([]);
   const [productsInCart, setProductsInCart] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState(0);
-  const [userInfo, setUserInfo] = useState(null);
-  const [activeCart, setActiveCart] = useState(null);
+  const {userInfo, activeCart, getCart} = useContext(UserContext);
+
 
   useEffect(() => {
     console.log(`cate id : ${selectedCategory}`);
@@ -25,31 +26,16 @@ const Catalog = () => {
     fetchProducts();
   }, [selectedCategory]);
 
-  useEffect(() => {
-    const getUser = async () => {
-      const fetchedUser = await fetchUser();
-      console.log(fetchedUser);
-      setUserInfo(fetchedUser);
-    };
-    getUser();
-  }, []);
-
-  const getCart = async () => {
-    try {let cart = await getCartInCatalog(userInfo.id);
-    if (!cart) {
-       cart = await createCartInCatalog(userInfo.id);
-    }
-    setActiveCart(cart);
-    setProductsInCart(cart.total_units);} 
-    catch (e) {
-      console.error("error fetching or creating cart", e);
-    }
-  };
+ 
 
   useEffect(() => {
-    if (!userInfo) return
-    getCart();
-  }, [userInfo]);
+    if (!activeCart) return
+    setProductsInCart(activeCart.total_units)
+  }, [activeCart]);
+
+
+
+  
 
 
   return (

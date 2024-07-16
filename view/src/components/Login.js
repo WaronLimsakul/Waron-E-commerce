@@ -56,7 +56,7 @@ const Login = () => {
                         </Typography>
                       )}
                       <TextField
-                        id="outlined-basic"
+                        id="username"
                         label="Username"
                         variant="filled"
                         style={{ margin: 10, width: "75%" }}
@@ -67,7 +67,7 @@ const Login = () => {
                         required
                       />
                       <TextField
-                        id="outlined-basic"
+                        id="password"
                         label="Password"
                         type="password"
                         variant="filled"

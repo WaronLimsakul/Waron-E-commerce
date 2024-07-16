@@ -148,7 +148,8 @@ app.post(
 app.delete("/cart/:id", accounts.checkAuthenticated, accounts.isOwnerOfCart, db.removeItem); //cart id (body contain product id then)
 
 //////////////////checkout = carts + orders
-app.post("/cart/:id/checkout", accounts.checkAuthenticated, db.checkout);
+app.post("/cart/:id/checkout", accounts.checkAuthenticated, accounts.isOwnerOfCart, db.checkout);
+app.post("/cart/:id/confirm-order", accounts.checkAuthenticated, accounts.isOwnerOfCart, db.confirmOrder);
 
 ////////////////// orders
 app.get("/orders", accounts.checkAuthenticated, db.getOrderHistory); //should be order history

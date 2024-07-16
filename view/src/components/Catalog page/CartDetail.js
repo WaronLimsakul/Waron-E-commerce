@@ -8,13 +8,24 @@ import {
   Typography,
   IconButton,
   Box,
+  Button,
+  Grid,
+  Divider,
 } from "@mui/material";
 import React from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useNavigate } from "react-router-dom";
 
-const CartDetail = ({ open, onClose, cartDetailArray, handleDeleteItem,fetchCartDetail, cartId }) => {
-  
+const CartDetail = ({
+  open,
+  onClose,
+  cartDetailArray,
+  handleDeleteItem,
+  fetchCartDetail,
+  cartId,
+}) => {
+  const navigate = useNavigate();
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
@@ -47,7 +58,12 @@ const CartDetail = ({ open, onClose, cartDetailArray, handleDeleteItem,fetchCart
                   key={detail.product_id}
                   alignItems="flex-start"
                   secondaryAction={
-                    <IconButton edge="end" onClick={() => {handleDeleteItem(cartId, detail.product_id)}}>
+                    <IconButton
+                      edge="end"
+                      onClick={() => {
+                        handleDeleteItem(cartId, detail.product_id);
+                      }}
+                    >
                       <DeleteIcon />
                     </IconButton>
                   }
@@ -77,6 +93,19 @@ const CartDetail = ({ open, onClose, cartDetailArray, handleDeleteItem,fetchCart
                 </ListItem>
               ))}
             </List>
+            <Divider />
+            <Grid container justifyContent="center" width="100%">
+              <Button
+                variant="contained"
+                style={{ marginTop: "3%" }}
+                onClick={() => {
+                  onClose();
+                  navigate("/checkout");
+                }}
+              >
+                Proceed to checkout
+              </Button>
+            </Grid>
           </>
         ) : (
           <Typography variant="body2" color="textSecondary">

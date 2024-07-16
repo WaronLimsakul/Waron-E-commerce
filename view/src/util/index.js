@@ -146,6 +146,7 @@ export const createCartInCatalog = async () => {
     });
     if (response.ok) {
       const newCart = await response.json();
+      console.log("create new cart");
       return newCart;
     } else {
       console.error("failed to create cart");
@@ -199,7 +200,9 @@ export const getCartDetail = async (cartId) => {
 
 export const removeItem = async (cartId, productId) => {
   try {
-    console.log(`Remove item process, cartId: ${cartId}, productId: ${productId}`);
+    console.log(
+      `Remove item process, cartId: ${cartId}, productId: ${productId}`
+    );
     const response = await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/cart/${cartId}`,
       {
@@ -208,15 +211,32 @@ export const removeItem = async (cartId, productId) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({productId}),
+        body: JSON.stringify({ productId }),
       }
     );
     if (response.ok) {
       return response.cart;
     } else {
-      console.error("failed removing item")
+      console.error("failed removing item");
     }
   } catch (e) {
     console.error(e);
+  }
+};
+
+export const getOrderHistory = async () => {
+  try {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/orders`, {
+      method: "GET",
+      credentials: "include",
+    });
+    if (response.ok) {
+      const ordersResult = await response.json();
+      return ordersResult;
+    } else {
+      console.error("failed to fetch order history");
+    }
+  } catch (err) {
+    console.error(err);
   }
 };

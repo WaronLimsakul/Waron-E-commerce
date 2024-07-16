@@ -1,6 +1,9 @@
 const Pool = require("pg").Pool;
 require("dotenv").config();
 
+const Stripe = require("stripe");
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+
 const pool = new Pool({
   user: process.env.PG_USER,
   host: process.env.PG_HOST,
@@ -287,6 +290,7 @@ const removeItem = async (req, res) => {
 const checkout = async (req, res) => {
   const cartId = parseInt(req.params.id);
   const accountId = parseInt(req.user.id);
+  const { amount, paymentIntentId } = req.body;
   try {
     // check if cart exist + has products
     const cart = await pool.query(
@@ -308,16 +312,58 @@ const checkout = async (req, res) => {
       return res.status(404).send({ error: "Items not found" });
     }
 
-    // payment (mocked)
-    const paymentSuccess = true;
-    if (!paymentSuccess) {
-      res.status(500).json({ error: "payment failed" });
+    // check if there is already payment intent
+    let paymentIntent;
+    if (paymentIntentId) {
+      paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
     }
 
-    // create order
+    // if there is no or lacks method, create new one
+    if (!paymentIntent || paymentIntent.status !== 'requires_payment_method') {
+      paymentIntent = await stripe.paymentIntents.create({
+        amount,
+        currency: "usd",
+        automatic_payment_methods: {
+          enabled: true,
+        },
+      });
+    }
+
+    console.log("client secret:", paymentIntent.client_secret);
+    res.status(200).json({
+      clientSecret: paymentIntent.client_secret, paymentIntentId: paymentIntent.id
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const confirmOrder = async (req, res) => {
+  const cartId = parseInt(req.params.id);
+  const accountId = parseInt(req.user.id);
+  const { paymentIntentId } = req.body;
+
+  try {
+    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+    // confirm payment
+    if (paymentIntent.status !== "succeeded") {
+      return res.status(500).json({ error: "Payment failed" });
+    }
+
+    // get the cart and products in it
+    const cart = await pool.query(
+      "SELECT * FROM carts WHERE id = $1 AND account_id = $2 AND checked_out = false",
+      [cartId, accountId]
+    );
+    const cartProducts = await pool.query(
+      "SELECT * FROM products_carts WHERE cart_id = $1",
+      [cartId]
+    );
+
     const orderResult = await pool.query(
       `INSERT INTO orders (account_id, order_date, total_price, status) 
-      VALUES ($1, CURRENT_DATE, $2, $3) RETURNING *`,
+    VALUES ($1, CURRENT_DATE, $2, $3) RETURNING *`,
       [accountId, cart.rows[0].total_price, "completed"]
     );
     const newOrder = orderResult.rows[0];
@@ -330,16 +376,14 @@ const checkout = async (req, res) => {
     // send products in cart to order
     for (const product of cartProducts.rows) {
       await pool.query(
-        `INSERT INTO products_orders (product_id, order_id, quantity, account_id) VALUES ($1, $2, $3)`,
+        `INSERT INTO products_orders (product_id, order_id, quantity, account_id) VALUES ($1, $2, $3, $4)`,
         [product.product_id, newOrder.id, product.quantity, accountId]
       );
     }
-    // respond woohoo
-    res.status(200).json({ message: "successful order", newOrder });
+    res.status(200).json({ message: "Order created successfully", newOrder });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "INternal server error" });
-    throw err;
+    res.status(500).json({ error: `Internal server error ${err}` });
   }
 };
 
@@ -370,10 +414,14 @@ const getOrderHistory = async (req, res) => {
   const accountId = parseInt(req.user.id);
   try {
     const orderResult = await pool.query(
-      "SELECT * FROM orders WHERE account_id = $1 ORDER BY order_date",
+      `SELECT order_id, order_date, po.account_id, product_id, quantity 
+      FROM orders 
+      JOIN products_orders po 
+      ON orders.id = po.order_id AND orders.account_id = po.account_id
+      WHERE po.account_id = $1`,
       [accountId]
     );
-    if (orderResult.rows.length == 0) {
+    if (orderResult.rows.length == 0) { // also test
       return res.send("No order found");
     }
     const orderHistory = orderResult.rows;
@@ -401,4 +449,5 @@ module.exports = {
   getAllOrders,
   getOrderHistory,
   checkout,
+  confirmOrder,
 };
