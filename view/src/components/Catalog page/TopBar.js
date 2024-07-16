@@ -23,9 +23,10 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useEffect, useState } from "react";
-import { getCartDetail, handleLogout, removeItem } from "../../util";
+import { getCartDetail, getOrderHistory, handleLogout, removeItem } from "../../util";
 import { Link } from "react-router-dom";
 import CartDetail from "./CartDetail";
+import OrdersHistory from "./OrdersHistory";
 
 const ResponsiveAutocomplete = styled(Autocomplete)(({ theme }) => ({
   width: "75%",
@@ -48,6 +49,8 @@ const TopBar = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openCart, setOpenCart] = useState(false);
   const [cartDetailArray, setCartDetailArray] = useState(null);
+  const [openHistory, setOpenHistory] = useState(false);
+  const [orderHistory, setOrderHistory] = useState(null);
 
   const fetchCartDetail = async () => {
     try {
@@ -55,6 +58,14 @@ const TopBar = (props) => {
       setCartDetailArray(cartDetailRows);
     } catch (error) {
       console.error('Error fetching cart details:', error);
+    }
+  };
+  const fetchOrderHistory = async () => {
+    try {
+      const ordersHistory = await getOrderHistory();
+      setOrderHistory(ordersHistory);
+    } catch (err) {
+      console.error("fail to fetch order history in front end:",err);
     }
   };
   useEffect(() => {
@@ -75,13 +86,22 @@ const TopBar = (props) => {
   const handleMenu = (e) => {
     setAnchorEl(e.currentTarget);
   };
-  const handleOpen = () => {
+  const handleOpenCart = () => {
     // fetch cart detail
     fetchCartDetail();
     setOpenCart(true);
   };
-  const handleClose = () => {
+  const handleCloseCart = () => {
     setOpenCart(false);
+  };
+  
+  const handleOpenHistory = () => {
+    // fetch orderhistory
+    fetchOrderHistory();
+    setOpenHistory(true);
+  };
+  const handleCloseHistory = () => {
+    setOpenHistory(false);
   };
   
   
@@ -180,14 +200,14 @@ const TopBar = (props) => {
               {userInfo && (
                 <>
                   <Tooltip title="Cart">
-                    <StyledIconButton size="large" onClick={handleOpen}>
+                    <StyledIconButton size="large" onClick={handleOpenCart}>
                       <Badge badgeContent={productsInCart} color="error">
                         <Cart />
                       </Badge>
                     </StyledIconButton>
                   </Tooltip>
                   <Tooltip title="Order history">
-                    <StyledIconButton size="large">
+                    <StyledIconButton size="large" onClick={handleOpenHistory}>
                       <HistoryIcon />
                     </StyledIconButton>
                   </Tooltip>
@@ -247,11 +267,17 @@ const TopBar = (props) => {
       </AppBar>
       <CartDetail
         open={openCart}
-        onClose={handleClose}
+        onClose={handleCloseCart}
         cartDetailArray={cartDetailArray ? cartDetailArray : []}
         fetchCartDetail={fetchCartDetail}
         handleDeleteItem={handleDeleteItem}
         cartId={cartId}
+      />
+      <OrdersHistory 
+        open={openHistory}
+        onClose={handleCloseHistory}
+        ordersHistory={orderHistory ? orderHistory : []}
+        fetchOrderHistory={fetchOrderHistory}
       />
     </Box>
   );

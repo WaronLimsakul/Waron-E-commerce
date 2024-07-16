@@ -226,15 +226,49 @@ export const removeItem = async (cartId, productId) => {
 
 export const getOrderHistory = async () => {
   try {
-    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/orders`, {
-      method: "GET",
-      credentials: "include",
-    });
+    const response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/orders`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    );
     if (response.ok) {
       const ordersResult = await response.json();
       return ordersResult;
     } else {
       console.error("failed to fetch order history");
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const updateAccount = async ({
+  accountId,
+  fullName,
+  email,
+  dateOfBirth,
+  address,
+}) => {
+  try {
+    const response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/accounts/${accountId}`,
+      {
+        method: "PUT",
+        credentials: "include",
+        body: JSON.stringify({
+          full_name: fullName,
+          email: email,
+          date_of_birht: dateOfBirth,
+          address: address,
+        }),
+      }
+    );
+    if (response.status === 201) {
+      return await response.json(); // don't know if 201 can pass response
+    } else {
+      console.error("fail to update account at utility");
     }
   } catch (err) {
     console.error(err);

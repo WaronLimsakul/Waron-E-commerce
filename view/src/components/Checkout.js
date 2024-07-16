@@ -145,6 +145,7 @@ const CheckoutForm = () => {
     if (orderResponse.ok) {
       setErrorMessage("");
       alert("Payment successful and order created!");
+      navigate("/catalog");
     } else {
       const result = await orderResponse.json();
       setErrorMessage(`Order creation failed: ${result.error}`);

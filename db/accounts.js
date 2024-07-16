@@ -27,6 +27,7 @@ const GoogleLogin = new GoogleStrategy({
         "INSERT INTO accounts (google_id, google_email) VALUES ($1 ,$2) RETURNING *", 
         [id, googleEmail]
       );
+      userDetail = await pool.query("INSERT INTO accounts_detail (email) VALUES ($1)", [googleEmail]); // google 
     } else {
       user = user.rows[0];
     }

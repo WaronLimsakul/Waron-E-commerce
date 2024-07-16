@@ -319,7 +319,7 @@ const checkout = async (req, res) => {
     }
 
     // if there is no or lacks method, create new one
-    if (!paymentIntent || paymentIntent.status !== 'requires_payment_method') {
+    if (!paymentIntent || paymentIntent.status !== "requires_payment_method") {
       paymentIntent = await stripe.paymentIntents.create({
         amount,
         currency: "usd",
@@ -331,7 +331,8 @@ const checkout = async (req, res) => {
 
     console.log("client secret:", paymentIntent.client_secret);
     res.status(200).json({
-      clientSecret: paymentIntent.client_secret, paymentIntentId: paymentIntent.id
+      clientSecret: paymentIntent.client_secret,
+      paymentIntentId: paymentIntent.id,
     });
   } catch (err) {
     console.error(err);
@@ -414,14 +415,19 @@ const getOrderHistory = async (req, res) => {
   const accountId = parseInt(req.user.id);
   try {
     const orderResult = await pool.query(
-      `SELECT order_id, order_date, po.account_id, product_id, quantity 
-      FROM orders 
-      JOIN products_orders po 
-      ON orders.id = po.order_id AND orders.account_id = po.account_id
-      WHERE po.account_id = $1`,
+      `WITH history AS (SELECT order_id, order_date, po.account_id, product_id, quantity 
+        FROM orders 
+        JOIN products_orders po 
+        ON orders.id = po.order_id AND orders.account_id = po.account_id
+        WHERE po.account_id = $1)
+        SELECT order_id, order_date, history.account_id, product_id, quantity, name
+        FROM history
+        JOIN products 
+        ON products.id = history.product_id`,
       [accountId]
     );
-    if (orderResult.rows.length == 0) { // also test
+    if (orderResult.rows.length == 0) {
+      // also test
       return res.send("No order found");
     }
     const orderHistory = orderResult.rows;
