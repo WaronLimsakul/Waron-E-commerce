@@ -10,6 +10,9 @@ const Catalog = () => {
   const [selectedCategory, setSelectedCategory] = useState(0);
   const {userInfo, activeCart, getCart} = useContext(UserContext);
 
+  useEffect(() => {
+    getCart();
+  }, [])
 
   useEffect(() => {
     console.log(`cate id : ${selectedCategory}`);

@@ -47,12 +47,17 @@ const CheckoutForm = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   
-  const { activeCart } = useContext(UserContext);
+  const { activeCart, getCart } = useContext(UserContext);
 
   useEffect(() => {
     if (!activeCart) return;
     setTotalPrice(activeCart.total_price);
   }, [activeCart]);
+
+  useEffect(() => {
+    getCart();
+    setTotalPrice(activeCart.total_price);
+  }, [])
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -138,7 +143,7 @@ const CheckoutForm = () => {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ paymentIntentId }),
+        body: JSON.stringify({ paymentIntentId: paymentResult.paymentIntent.id }),
       }
     );
 
