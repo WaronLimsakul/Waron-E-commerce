@@ -244,31 +244,48 @@ export const getOrderHistory = async () => {
   }
 };
 
-export const updateAccount = async ({
-  accountId,
-  fullName,
-  email,
-  dateOfBirth,
-  address,
-}) => {
+export const updateAccount = async (accountId, formValues) => {
   try {
+    const { fullName, email, dateOfBirth, address } = formValues;
     const response = await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/accounts/${accountId}`,
       {
         method: "PUT",
         credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           full_name: fullName,
           email: email,
-          date_of_birht: dateOfBirth,
+          date_of_birth: dateOfBirth,
           address: address,
         }),
       }
     );
-    if (response.status === 201) {
-      return await response.json(); // don't know if 201 can pass response
+    if (response.ok) {
+      return await response.json(); // message , detail
     } else {
       console.error("fail to update account at utility");
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const fetchAccountDetail = async (id) => {
+  try {
+    const response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/accounts/${id}`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    );
+    if (response.ok) {
+      return await response.json();
+    } else {
+      console.error(response.error);
     }
   } catch (err) {
     console.error(err);

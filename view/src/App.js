@@ -11,6 +11,7 @@ import Login from "./components/Login";
 import Catalog from "./components/Catalog page/Catalog";
 import Checkout from "./components/Checkout";
 import { UserProvider } from "./components/UserContext";
+import Account from "./components/Account";
 
 function App() {
   return (
@@ -32,6 +33,14 @@ function App() {
           element={
             <UserProvider>
               <Checkout />
+            </UserProvider>
+          }
+        />
+        <Route
+          path="/account"
+          element={
+            <UserProvider>
+              <Account />
             </UserProvider>
           }
         />

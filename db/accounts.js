@@ -10,32 +10,41 @@ const pool = new Pool({
 });
 const localStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcrypt");
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
-const GoogleLogin = new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: process.env.GOOGLE_CALLBACK_URL
-}, async (accessToken, refreshToken, profile, done) => {
-  try {
-    const {id, emails} = profile;
-    const googleEmail = emails[0].value;
+const GoogleLogin = new GoogleStrategy(
+  {
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: process.env.GOOGLE_CALLBACK_URL,
+  },
+  async (accessToken, refreshToken, profile, done) => {
+    try {
+      const { id, emails } = profile;
+      const googleEmail = emails[0].value;
 
-    let user = await pool.query("SELECT * FROM accounts WHERE google_id = $1 OR google_email = $2", [id, googleEmail]);
-    if (user.rows.length === 0) {
-      user = await pool.query(
-        "INSERT INTO accounts (google_id, google_email) VALUES ($1 ,$2) RETURNING *", 
+      let user = await pool.query(
+        "SELECT * FROM accounts WHERE google_id = $1 OR google_email = $2",
         [id, googleEmail]
       );
-      userDetail = await pool.query("INSERT INTO accounts_detail (email) VALUES ($1)", [googleEmail]); // google 
-    } else {
-      user = user.rows[0];
+      if (user.rows.length === 0) {
+        user = await pool.query(
+          "INSERT INTO accounts (google_id, google_email) VALUES ($1 ,$2) RETURNING *",
+          [id, googleEmail]
+        );
+        userDetail = await pool.query(
+          "INSERT INTO accounts_detail (email) VALUES ($1)",
+          [googleEmail]
+        ); // google
+      } else {
+        user = user.rows[0];
+      }
+      return done(null, user);
+    } catch (err) {
+      return done(err, false);
     }
-    return done(null, user);
- } catch (err) {
-  return done(err, false);
- }
-});
+  }
+);
 
 const createAccount = async (account) => {
   const { username, password } = account;
@@ -48,6 +57,10 @@ const createAccount = async (account) => {
       [username, hashedPassword]
     );
     const newAccount = results.rows[0];
+    const accountDetail = await pool.query(
+      "INSERT INTO accounts_detail (account_id, full_name) VALUES ($1, $2)",
+      [newAccount.id, username]
+    );
     return newAccount;
   } catch (err) {
     console.log("Error creating account", err);
@@ -142,5 +155,5 @@ module.exports = {
   checkAuthenticated,
   isOwner,
   isOwnerOfCart,
-  GoogleLogin
+  GoogleLogin,
 };

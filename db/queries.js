@@ -35,7 +35,7 @@ const getAccountById = (req, res) => {
         res.status(500).json({ error: "Internal server error" });
         return;
       }
-      res.status(200).json(results.rows);
+      res.status(200).json(results.rows[0]);
     }
   );
 };
@@ -72,7 +72,7 @@ const updateAccountById = async (req, res) => {
       [id]
     );
     res
-      .status(201)
+      .status(200)
       .json({ message: "update success!", detail: updatedAccount.rows[0] });
   } catch (err) {
     res.status(500).send("error updating accounts");

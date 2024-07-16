@@ -24,7 +24,7 @@ import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useEffect, useState } from "react";
 import { getCartDetail, getOrderHistory, handleLogout, removeItem } from "../../util";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import CartDetail from "./CartDetail";
 import OrdersHistory from "./OrdersHistory";
 
@@ -51,6 +51,7 @@ const TopBar = (props) => {
   const [cartDetailArray, setCartDetailArray] = useState(null);
   const [openHistory, setOpenHistory] = useState(false);
   const [orderHistory, setOrderHistory] = useState(null);
+  const navigate = useNavigate();
 
   const fetchCartDetail = async () => {
     try {
@@ -239,7 +240,8 @@ const TopBar = (props) => {
                   >
                     <MenuItem
                       onClick={() => {
-                        setAnchorEl(null);
+                        setAnchorEl(null);  
+                        navigate("/account");
                       }}
                     >
                       <ListItemIcon>
