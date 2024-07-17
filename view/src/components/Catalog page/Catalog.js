@@ -8,11 +8,13 @@ const Catalog = () => {
   const [productsArray, setProductsArray] = useState([]);
   const [productsInCart, setProductsInCart] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState(0);
-  const {userInfo, activeCart, getCart} = useContext(UserContext);
+  const {userInfo, activeCart, debouncedGetCart, loggedIn} = useContext(UserContext);
 
   useEffect(() => {
-    getCart();
-  }, [])
+    if (loggedIn) {
+      debouncedGetCart();
+    }
+  }, [ ]);
 
   useEffect(() => {
     console.log(`cate id : ${selectedCategory}`);
@@ -41,7 +43,7 @@ const Catalog = () => {
         filter={{selectedCategory, setSelectedCategory}} 
         userInfo={userInfo} 
         cartId={activeCart ? activeCart.id : null}
-        getCart={getCart}
+        debouncedGetCart={debouncedGetCart}
       />
       <ProductList
         productsInCart={productsInCart}

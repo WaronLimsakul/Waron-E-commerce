@@ -49,7 +49,7 @@ const CheckoutForm = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const { activeCart, getCart, loggedIn } = useContext(UserContext);
+  const { activeCart, debouncedGetCart, loggedIn } = useContext(UserContext);
 
   useEffect(() => {
     if (!activeCart || !loggedIn) {
@@ -59,14 +59,12 @@ const CheckoutForm = () => {
     setTotalPrice(activeCart.total_price);
   }, [activeCart, loggedIn]);
 
+  
   useEffect(() => {
-    if (!activeCart || !loggedIn) {
-      console.log("don't have cart or not logged in, useless to checkout");
-      return;
+    if (loggedIn) {
+      debouncedGetCart();
     }
-    getCart();
-    setTotalPrice(activeCart.total_price);
-  }, []);
+  }, [ ]);
 
   if (!activeCart && !loggedIn)
     return (
@@ -109,13 +107,13 @@ const CheckoutForm = () => {
         // Check if the new clientSecret is set before proceeding
         if (!result.clientSecret) {
           setErrorMessage(
-            "Failed to create payment intent. No client secret sent"
+            "Failed to create payment intent. Please try again"
           );
           setIsProcessing(false);
           return;
         }
       } catch (err) {
-        setErrorMessage("Failed to create payment intent.");
+        setErrorMessage("Failed to create payment intent. Please try again");
         setIsProcessing(false);
         return;
       }
@@ -169,8 +167,7 @@ const CheckoutForm = () => {
       alert("Payment successful and order created!");
       navigate("/catalog");
     } else {
-      const result = await orderResponse.json();
-      setErrorMessage(`Order creation failed: ${result.error}`);
+      setErrorMessage(`Order creation failed, please try again`);
     }
     setIsProcessing(false);
   };

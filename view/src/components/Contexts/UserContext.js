@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useCallback } from "react";
 import { createCartInCatalog, fetchUser, getCartInCatalog } from "../../util";
 
 const UserContext = createContext();
@@ -7,6 +7,7 @@ const UserProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState(null);
   const [activeCart, setActiveCart] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [fetchingCart, setFetchingCart] = useState(false);
 
   useEffect(() => {
     const getUser = async () => {
@@ -18,11 +19,11 @@ const UserProvider = ({ children }) => {
     getUser();
   }, []);
 
-  const getCart = async () => {
-    if (!loggedIn) {
-      console.log("user not logged in, useless to fetch cart");
-      return
-    }
+
+  const debouncedGetCart = useCallback(async () => {
+    if (!loggedIn || fetchingCart) return;
+
+    setFetchingCart(true);
     try {
       let fetchedCart = await getCartInCatalog(userInfo.id);
       if (!fetchedCart) {
@@ -31,16 +32,19 @@ const UserProvider = ({ children }) => {
       setActiveCart(fetchedCart);
     } catch (e) {
       console.error("Error fetching or creating cart", e);
+    } finally {
+      setFetchingCart(false);
     }
-  };
+  }, [loggedIn, fetchingCart, userInfo]);
   
   useEffect(() => {
-    if (!userInfo) return;
-    getCart();
+    if (loggedIn && userInfo) {
+      debouncedGetCart();
+    }
   }, [userInfo]);
 
   return (
-    <UserContext.Provider value={{userInfo, activeCart, getCart, loggedIn}}>{children}</UserContext.Provider>
+    <UserContext.Provider value={{userInfo, activeCart, loggedIn, debouncedGetCart}}>{children}</UserContext.Provider>
   );
 };
 

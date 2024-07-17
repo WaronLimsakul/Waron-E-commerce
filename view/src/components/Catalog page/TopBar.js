@@ -44,7 +44,7 @@ const TopBar = (props) => {
   const productsInCart = props.productsInCart;
   const userInfo = props.userInfo;
   const cartId = props.cartId;
-  const getCart = props.getCart;
+  const debouncedGetCart = props.debouncedGetCart;
   const { setSelectedCategory } = props.filter;
   const [anchorEl, setAnchorEl] = useState(null);
   const [openCart, setOpenCart] = useState(false);
@@ -78,7 +78,7 @@ const TopBar = (props) => {
     try {
       await removeItem(cartId, productId);
       await fetchCartDetail();
-      getCart();
+      debouncedGetCart();
     } catch (error) {
       console.error('Error removing item from cart:', error);
     }
