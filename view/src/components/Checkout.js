@@ -22,6 +22,8 @@ import {
 import { UserContext } from "./UserContext";
 import countries from "../util/countries";
 import { useNavigate } from "react-router-dom";
+import Unauthorized from "./Unauthorized";
+
 
 const stripePromise = loadStripe(process.env.REACT_APP_PUBLISHABLE_KEY);
 
@@ -46,18 +48,30 @@ const CheckoutForm = () => {
 
   const [errorMessage, setErrorMessage] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
-  
-  const { activeCart, getCart } = useContext(UserContext);
+
+  const { activeCart, getCart, loggedIn } = useContext(UserContext);
 
   useEffect(() => {
-    if (!activeCart) return;
+    if (!activeCart || !loggedIn) {
+      console.log("don't have cart or not logged in, useless to checkout");
+      return;
+    }
     setTotalPrice(activeCart.total_price);
-  }, [activeCart]);
+  }, [activeCart, loggedIn]);
 
   useEffect(() => {
+    if (!activeCart || !loggedIn) {
+      console.log("don't have cart or not logged in, useless to checkout");
+      return;
+    }
     getCart();
     setTotalPrice(activeCart.total_price);
-  }, [])
+  }, []);
+
+  if (!activeCart || !loggedIn)
+    return (
+      <Unauthorized />
+    );
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -70,43 +84,44 @@ const CheckoutForm = () => {
 
     if (!clientSecret || paymentStatus !== "succeeded") {
       try {
-      // 1. Create payment intent if not exists
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/cart/${activeCart.id}/checkout`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            amount: 100 * totalPrice, // amount in cents
-            paymentIntentId,
-          }),
+        // 1. Create payment intent if not exists
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/cart/${activeCart.id}/checkout`,
+          {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              amount: 100 * totalPrice, // amount in cents
+              paymentIntentId,
+            }),
+          }
+        );
+
+        const result = await response.json();
+        setClientSecret(result.clientSecret);
+        setPaymentIntentId(result.paymentIntentId);
+        console.log("Charging", 100 * totalPrice, "cents");
+        // console.log("Client secret:", result.clientSecret);
+        // console.log("payment intent id:", result.paymentIntentId);
+        currentClientSecret = result.clientSecret;
+
+        // Check if the new clientSecret is set before proceeding
+        if (!result.clientSecret) {
+          setErrorMessage(
+            "Failed to create payment intent. No client secret sent"
+          );
+          setIsProcessing(false);
+          return;
         }
-      );
-
-      const result = await response.json();
-      setClientSecret(result.clientSecret);
-      setPaymentIntentId(result.paymentIntentId);
-      console.log("Charging", 100 * totalPrice, "cents");
-      // console.log("Client secret:", result.clientSecret);
-      // console.log("payment intent id:", result.paymentIntentId);
-      currentClientSecret = result.clientSecret;
-
-      // Check if the new clientSecret is set before proceeding
-    if (!result.clientSecret) {
-      setErrorMessage("Failed to create payment intent. No client secret sent");
-      setIsProcessing(false);
-      return;
-    }} catch (err) {
-      setErrorMessage("Failed to create payment intent.");
-      setIsProcessing(false);
-      return;
-    }
-    
+      } catch (err) {
+        setErrorMessage("Failed to create payment intent.");
+        setIsProcessing(false);
+        return;
+      }
     }
     // console.log("client secret after set:", clientSecret);
     // console.log("Current clientSecret being used:", currentClientSecret);
-
 
     // 2. Confirm card payment
     const cardNumberElement = elements.getElement(CardNumberElement);
@@ -143,7 +158,9 @@ const CheckoutForm = () => {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ paymentIntentId: paymentResult.paymentIntent.id }),
+        body: JSON.stringify({
+          paymentIntentId: paymentResult.paymentIntent.id,
+        }),
       }
     );
 
@@ -325,7 +342,7 @@ const CheckoutForm = () => {
           color="primary"
           fullWidth
           sx={{ mt: 3 }}
-          disabled={!stripe || isProcessing}
+          disabled={!stripe || isProcessing || totalPrice === "0"}
         >
           {isProcessing ? "Processing..." : "Pay"}
         </Button>

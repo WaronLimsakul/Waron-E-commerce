@@ -29,17 +29,10 @@ const Catalog = () => {
     fetchProducts();
   }, [selectedCategory]);
 
- 
-
   useEffect(() => {
     if (!activeCart) return
     setProductsInCart(activeCart.total_units)
   }, [activeCart]);
-
-
-
-  
-
 
   return (
     <>

@@ -4,22 +4,7 @@ import { useState } from "react";
 import ProductDetail from "./ProductDetail";
 
 const ProductList = (props) => {
-  const ProductArray = [
-    // products array sample
-    {
-      id: 1,
-      name: "sofa",
-      price: 120.0,
-      stock: 5,
-      description: "red sofa, black legs",
-      category_id: 1,
-      picture_url:
-        "https://i.pinimg.com/736x/ef/8c/23/ef8c23bb773239fb665f9dcfff8a6517.jpg",
-    },
-  ]; // have to get from server
   const productsArray = props.productsArray;
-  
-
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const handleCardClick = (product) => {

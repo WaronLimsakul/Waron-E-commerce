@@ -5,7 +5,6 @@ import {
   Card,
   CardActions,
   CardContent,
-  CardHeader,
   CircularProgress,
   Container,
   Dialog,
@@ -27,9 +26,10 @@ import { fetchAccountDetail, updateAccount } from "../util";
 import EditIcon from "@mui/icons-material/Edit";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate } from "react-router-dom";
+import Unauthorized from "./Unauthorized";
 
 const Account = () => {
-  const { userInfo } = useContext(UserContext);
+  const { userInfo, loggedIn } = useContext(UserContext);
   const [accountDetail, setAccountDetail] = useState(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -43,7 +43,10 @@ const Account = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!userInfo) return;
+    if (!userInfo || !loggedIn) {
+      console.log("not logged in, useless to get account detail");
+      return;
+    }
     const getAccountDetail = async () => {
       const fetchedDetail = await fetchAccountDetail(userInfo.id);
       console.log(fetchedDetail);
@@ -57,7 +60,12 @@ const Account = () => {
       setLoading(false);
     };
     getAccountDetail();
-  }, [userInfo]);
+  }, [userInfo, loggedIn]);
+
+  if (!userInfo || !loggedIn)
+    return (
+      <Unauthorized />
+    );
 
   const handleEditClick = () => {
     setEditDialogOpen(true);

@@ -76,9 +76,11 @@ export const fetchUser = async () => {
       return { username: result.username, id: result.id };
     } else {
       console.error("Failed to fetch user", response.statusText);
+      return 
     }
   } catch (e) {
     console.error(e);
+    return 
   }
 };
 

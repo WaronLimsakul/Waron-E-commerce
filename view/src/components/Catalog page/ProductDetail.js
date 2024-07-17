@@ -10,8 +10,9 @@ import {
   IconButton,
 } from "@mui/material";
 import React, { useState } from "react";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
 import { addItemToCart } from "../../util";
+import { useNavigate } from "react-router-dom";
 
 const ProductDetail = ({
   open,
@@ -20,11 +21,12 @@ const ProductDetail = ({
   setProductsInCart,
   productsInCart,
   // userid , cartid, quantity
-  cartId
+  cartId,
 }) => {
+  const navigate = useNavigate();
   const [quantity, setQuantity] = useState(0);
   if (!product) return null;
-  const {id, name, price, description, picture_url } = product;
+  const { id, name, price, description, picture_url } = product;
   const handleAddToCart = async () => {
     if (quantity > 0) {
       const response = await addItemToCart(cartId, id, quantity); // this is detail
@@ -37,7 +39,9 @@ const ProductDetail = ({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>{name} <IconButton
+      <DialogTitle>
+        {name}{" "}
+        <IconButton
           aria-label="close"
           onClick={onClose}
           sx={{
@@ -48,7 +52,8 @@ const ProductDetail = ({
           }}
         >
           <CloseIcon />
-        </IconButton></DialogTitle>
+        </IconButton>
+      </DialogTitle>
       <DialogContent>
         <Box
           component="img"
@@ -116,9 +121,26 @@ const ProductDetail = ({
             width: { xs: "100%", sm: "auto" },
             mt: { xs: 1, sm: 0 },
           }}
+          disabled={!cartId}
         >
           Add to cart
         </Button>
+        {!cartId && (
+          <Button
+            variant="text"
+            size="small"
+            onClick={() => {
+              navigate("/login");
+            }}
+            sx={{
+              fontSize: { xs: "0.7rem", sm: "0.875rem" },
+              width: { xs: "100%", sm: "auto" },
+              mt: { xs: 1, sm: 0 },
+            }}
+          >
+            Please log in
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );

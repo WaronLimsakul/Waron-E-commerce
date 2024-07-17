@@ -6,16 +6,23 @@ const UserContext = createContext();
 const UserProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState(null);
   const [activeCart, setActiveCart] = useState(null);
+  const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
     const getUser = async () => {
       const fetchedUser = await fetchUser();
+      if (!fetchedUser) return
       setUserInfo(fetchedUser);
+      setLoggedIn(true);
     };
     getUser();
   }, []);
 
   const getCart = async () => {
+    if (!loggedIn) {
+      console.log("user not logged in, useless to fetch cart");
+      return
+    }
     try {
       let fetchedCart = await getCartInCatalog(userInfo.id);
       if (!fetchedCart) {
@@ -33,7 +40,7 @@ const UserProvider = ({ children }) => {
   }, [userInfo]);
 
   return (
-    <UserContext.Provider value={{userInfo, activeCart, getCart}}>{children}</UserContext.Provider>
+    <UserContext.Provider value={{userInfo, activeCart, getCart, loggedIn}}>{children}</UserContext.Provider>
   );
 };
 

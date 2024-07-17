@@ -187,7 +187,7 @@ const TopBar = (props) => {
               height="100%"
               wrap="nowrap"
             >
-              <Typography variant="body1" marginRight="1%">
+              {!isSmallScreen && <Typography variant="body1" marginRight="1%">
                 {userInfo ? (
                   `Hello! ${userInfo.username}`
                 ) : (
@@ -197,7 +197,7 @@ const TopBar = (props) => {
                     </Button>
                   </Link>
                 )}
-              </Typography>
+              </Typography>}
               {userInfo && (
                 <>
                   <Tooltip title="Cart">
