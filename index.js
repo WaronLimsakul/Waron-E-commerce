@@ -97,6 +97,12 @@ app.get("/user", accounts.checkAuthenticated, (req, res) => {
   res.json({ username: req.user.username, id: req.user.id });
 });
 
+app.post('/extend-session', accounts.checkAuthenticated, (req, res) => {
+  // Extend the session expiration time
+  req.session.cookie.maxAge = 1000 * 60 * 30; // Reset to 30 minutes
+  res.json({ success: true });
+});
+
 ////////////////////////////////////////////////////////// endpoint part
 
 ////////////////// accounts

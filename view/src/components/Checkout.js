@@ -19,7 +19,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { UserContext } from "./UserContext";
+import { UserContext } from "./Contexts/UserContext";
 import countries from "../util/countries";
 import { useNavigate } from "react-router-dom";
 import Unauthorized from "./Unauthorized";
@@ -68,7 +68,7 @@ const CheckoutForm = () => {
     setTotalPrice(activeCart.total_price);
   }, []);
 
-  if (!activeCart || !loggedIn)
+  if (!activeCart && !loggedIn)
     return (
       <Unauthorized />
     );

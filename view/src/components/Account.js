@@ -21,7 +21,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
-import { UserContext } from "./UserContext";
+import { UserContext } from "./Contexts/UserContext";
 import { fetchAccountDetail, updateAccount } from "../util";
 import EditIcon from "@mui/icons-material/Edit";
 import CloseIcon from "@mui/icons-material/Close";
@@ -62,7 +62,7 @@ const Account = () => {
     getAccountDetail();
   }, [userInfo, loggedIn]);
 
-  if (!userInfo || !loggedIn)
+  if (!userInfo && !loggedIn)
     return (
       <Unauthorized />
     );

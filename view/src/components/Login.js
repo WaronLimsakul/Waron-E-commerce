@@ -7,18 +7,22 @@ import {
   Button,
   CardContent,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate as UseNavigate } from "react-router-dom";
 import { handleLogin } from "../util";
+import { SessionContext } from "./Contexts/SessionContext";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [correct, setCorrect] = useState(true);
   const navigate = UseNavigate();
+  const { handleLoginResponse } = useContext(SessionContext);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await handleLogin(username, password);
+    handleLoginResponse(response);
     if (response.authenticate) {
       navigate("/catalog");
     } else {

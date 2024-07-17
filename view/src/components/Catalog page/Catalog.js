@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import TopBar from "./TopBar";
 import ProductList from "./ProductList";
 import {  fetchAllProducts, fetchProductsFromCategory } from "../../util";
-import { UserContext } from "../UserContext";
+import { UserContext } from "../Contexts/UserContext";
 
 const Catalog = () => {
   const [productsArray, setProductsArray] = useState([]);
