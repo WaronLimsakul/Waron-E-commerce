@@ -6,11 +6,15 @@ import {
   TextField,
   Button,
   CardContent,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 import React, { useContext, useState } from "react";
 import { Link, useNavigate as UseNavigate } from "react-router-dom";
 import { handleLogin } from "../util";
 import { SessionContext } from "./Contexts/SessionContext";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -18,6 +22,11 @@ const Login = () => {
   const [correct, setCorrect] = useState(true);
   const navigate = UseNavigate();
   const { handleLoginResponse } = useContext(SessionContext);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickEye = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -73,7 +82,7 @@ const Login = () => {
                       <TextField
                         id="password"
                         label="Password"
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         variant="filled"
                         style={{ margin: 10, width: "75%" }}
                         value={password}
@@ -81,6 +90,19 @@ const Login = () => {
                           setPassword(e.target.value);
                         }}
                         required
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton onClick={handleClickEye} edge="end">
+                                {showPassword ? (
+                                  <VisibilityOff />
+                                ) : (
+                                  <Visibility />
+                                )}
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
                       />
                       <Button
                         type="submit"

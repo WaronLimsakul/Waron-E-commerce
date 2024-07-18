@@ -40,6 +40,7 @@ const Account = () => {
     email: "",
   });
   const [alertOpen, setAlertOpen] = useState(false);
+  const [emailError, setEmailError] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -62,10 +63,7 @@ const Account = () => {
     getAccountDetail();
   }, [userInfo, loggedIn]);
 
-  if (!userInfo && !loggedIn)
-    return (
-      <Unauthorized />
-    );
+  if (!userInfo && !loggedIn) return <Unauthorized />;
 
   const handleEditClick = () => {
     setEditDialogOpen(true);
@@ -81,11 +79,22 @@ const Account = () => {
       ...prevFormValues,
       [name]: value,
     }));
-    console.log(formValues);
+  };
+
+  const validateEmail = () => {
+    // Basic email validation using HTML5 pattern attribute
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return formValues.email.match(emailRegex);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateEmail()) {
+      // may use Alert instead
+      setEmailError(true);
+      return;
+    }
+    setEmailError(false);
     const result = await updateAccount(userInfo.id, formValues);
     setEditDialogOpen(false);
     setAccountDetail(result.detail);
@@ -261,6 +270,11 @@ const Account = () => {
               required
             />
             {/* Add other fields as necessary */}
+            {emailError && (
+              <Alert severity="error" onClose={() => setEmailError(false)}>
+                Please enter a valid email address
+              </Alert>
+            )}
           </Box>
         </DialogContent>
         <DialogActions>

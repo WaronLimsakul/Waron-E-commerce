@@ -1,21 +1,32 @@
 import React, { useState } from "react";
 import {
+  Box,
   Button,
   Card,
   CardActions,
   CardContent,
   Grid,
+  IconButton,
+  InputAdornment,
   TextField,
   Typography,
 } from "@mui/material";
 import { Link, useNavigate as UseNavigate } from "react-router-dom";
 import { handleGoogleLogin, handleRegister } from "../util";
 import GoogleIcon from "@mui/icons-material/Google";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import Logo from "../waron-logo-zip-file/png/logo-no-background.png";
 
 function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = UseNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickEye = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,7 +37,29 @@ function Register() {
   return (
     <>
       <Grid container>
-        <Grid item lg={4} md={3} xs={2}></Grid>
+        <Grid item lg={2} md={3} xs={2}></Grid>
+        <Grid
+          container
+          item
+          lg={4}
+          md={false}
+          alignItems="center"
+          justifyContent="center"
+          height="80vh"
+          sx={{
+            display: { xs: 'none', lg: 'flex' }, // Hide on xs screens, show on md and up
+          }}
+        >
+          <Box
+            component="img"
+            sx={{
+              height: "20vh",
+              margin: "1%",
+            }}
+            alt="Logo"
+            src={Logo}
+          />
+        </Grid>
         <Grid item lg={4} md={6} xs={8} marginTop="5%">
           <Grid item width="100%" minWidth="500">
             <Card xs={12} elevation={2}>
@@ -66,6 +99,19 @@ function Register() {
                           setPassword(e.target.value);
                         }}
                         required
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton onClick={handleClickEye} edge="end">
+                                {showPassword ? (
+                                  <VisibilityOff />
+                                ) : (
+                                  <Visibility />
+                                )}
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
                       />
                       <Button
                         type="submit"
@@ -85,13 +131,13 @@ function Register() {
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
-                          position: 'relative'
+                          position: "relative",
                         }}
                         onClick={handleGoogleLogin}
                       >
                         {" "}
                         <GoogleIcon
-                          style={{ position: "absolute", left: '5%' }}
+                          style={{ position: "absolute", left: "5%" }}
                         />
                         Sign up with Google
                       </Button>
@@ -112,7 +158,7 @@ function Register() {
             </Card>
           </Grid>
         </Grid>
-        <Grid item lg={4} md={3} xs={2}></Grid>
+        <Grid item lg={2} md={3} xs={2}></Grid>
       </Grid>
     </>
   );

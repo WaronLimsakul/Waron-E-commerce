@@ -6,9 +6,13 @@ const passport = require("passport");
 const session = require("express-session");
 const cors = require("cors");
 require("dotenv").config();
+const helmet = require("helmet");
+const { body, validationResult } = require("express-validator");
 
 ////////////////////////////////////////////////////////// session and server configuration
 const app = express();
+
+app.use(helmet());
 
 app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true })); // work
 
@@ -16,12 +20,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(
+  // check this setting
   session({
     secret: process.env.SESSION_SECRET,
     cookie: {
       maxAge: 1000 * 60 * 30,
       secure: process.env.NODE_ENV === "production", // true in production
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      httpOnly: true,
     }, //when samesite: none => must secure : true
     resave: false,
     saveUninitialized: false,
@@ -43,22 +49,34 @@ passport.deserializeUser(accounts.deserializeAccountById);
 passport.use(accounts.GoogleLogin);
 
 ////////////////////////////////////////////////////////// login - register -logout
-app.post("/login", (req, res, next) => {
-  passport.authenticate("local", (err, user, info) => {
-    if (err) {
-      return res.status(500).json({ message: "Internal server error" });
+app.post(
+  "/login",
+  [
+    body("username").notEmpty().trim().escape(),
+    body("password").notEmpty().trim().escape(),
+  ],
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
-    if (!user) {
-      return res.status(400).json({ message: info.message });
-    }
-    req.login(user, (err) => {
+
+    passport.authenticate("local", (err, user, info) => {
       if (err) {
-        return res.status(500).json({ message: "Login failed" });
+        return res.status(500).json({ message: "Internal server error" });
       }
-      res.json({ message: "Login successful" }); // still not deserialize yet
-    });
-  })(req, res, next);
-});
+      if (!user) {
+        return res.status(400).json({ message: info.message });
+      }
+      req.login(user, (err) => {
+        if (err) {
+          return res.status(500).json({ message: "Login failed" });
+        }
+        res.json({ message: "Login successful" }); // still not deserialize yet
+      });
+    })(req, res, next);
+  }
+);
 
 app.get(
   "/auth/google",
@@ -97,7 +115,7 @@ app.get("/user", accounts.checkAuthenticated, (req, res) => {
   res.json({ username: req.user.username, id: req.user.id });
 });
 
-app.post('/extend-session', accounts.checkAuthenticated, (req, res) => {
+app.post("/extend-session", accounts.checkAuthenticated, (req, res) => {
   // Extend the session expiration time
   req.session.cookie.maxAge = 1000 * 60 * 30; // Reset to 30 minutes
   res.json({ success: true });
@@ -117,6 +135,19 @@ app.put(
   "/accounts/:id",
   accounts.checkAuthenticated,
   accounts.isOwner,
+  [
+    body('fullName').notEmpty().trim(),
+    body('dateOfBirth').notEmpty(),
+    body('address').notEmpty().trim(),
+    body('email').notEmpty().isEmail().normalizeEmail(),
+  ],
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next()
+  },
   db.updateAccountById
 );
 
@@ -151,11 +182,26 @@ app.post(
   accounts.isOwnerOfCart,
   db.updateCart
 );
-app.delete("/cart/:id", accounts.checkAuthenticated, accounts.isOwnerOfCart, db.removeItem); //cart id (body contain product id then)
+app.delete(
+  "/cart/:id",
+  accounts.checkAuthenticated,
+  accounts.isOwnerOfCart,
+  db.removeItem
+); //cart id (body contain product id then)
 
 //////////////////checkout = carts + orders
-app.post("/cart/:id/checkout", accounts.checkAuthenticated, accounts.isOwnerOfCart, db.checkout);
-app.post("/cart/:id/confirm-order", accounts.checkAuthenticated, accounts.isOwnerOfCart, db.confirmOrder);
+app.post(
+  "/cart/:id/checkout",
+  accounts.checkAuthenticated,
+  accounts.isOwnerOfCart,
+  db.checkout
+);
+app.post(
+  "/cart/:id/confirm-order",
+  accounts.checkAuthenticated,
+  accounts.isOwnerOfCart,
+  db.confirmOrder
+);
 
 ////////////////// orders
 app.get("/orders", accounts.checkAuthenticated, db.getOrderHistory); //should be order history
