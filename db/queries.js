@@ -145,11 +145,6 @@ const getCart = async (req, res) => {
       "SELECT * FROM carts WHERE account_id = $1 AND checked_out = false",
       [accountId]
     );
-    // const cartProducts = await pool.query(
-    //   "SELECT product_id, quantity FROM products_carts WHERE cart_id = $1",
-    //   [cart.rows[0].id]
-    // );
-    console.log("cart found:", cart.rows.length);
     if (cart.rows.length == 0) {
       return res
         .status(404)
@@ -297,8 +292,6 @@ const checkout = async (req, res) => {
       "SELECT * FROM carts WHERE id = $1 AND account_id = $2 AND checked_out = false",
       [cartId, accountId]
     );
-    console.log("cart id :", cartId);
-    console.log("account id:", accountId);
     if (cart.rows.length == 0) {
       return res
         .status(404)
@@ -329,7 +322,6 @@ const checkout = async (req, res) => {
       });
     }
 
-    console.log("client secret:", paymentIntent.client_secret);
     res.status(200).json({
       clientSecret: paymentIntent.client_secret,
       paymentIntentId: paymentIntent.id,

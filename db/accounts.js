@@ -49,7 +49,6 @@ const GoogleLogin = new GoogleStrategy(
 const createAccount = async (account) => {
   const { username, password } = account;
   try {
-    console.log(username, password);
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const results = await pool.query(
@@ -63,7 +62,7 @@ const createAccount = async (account) => {
     );
     return newAccount;
   } catch (err) {
-    console.log("Error creating account", err);
+    console.error("Error creating account", err);
     throw err;
   }
 };
@@ -118,10 +117,6 @@ const checkAuthenticated = (req, res, next) => {
 const isOwner = (req, res, next) => {
   const requestedUserId = parseInt(req.params.id);
   const authenticatedUserId = parseInt(req.user.id);
-  // console.log('this is what you request:', requestedUserId);
-  // console.log('this is you:', authenticatedUserId);
-  // console.log('this is req.user', req.user);
-  // console.log('this is session', req.session);
 
   if (requestedUserId !== authenticatedUserId) {
     return res.status(401).json({ error: "You're not him" });

@@ -96,7 +96,7 @@ app.get(
 app.post("/register", async (req, res) => {
   try {
     const newAccount = await accounts.createAccount(req.body);
-    res.status(201).json({ message: "register success", newAccount });
+    res.status(200).json({ message: "register success", newAccount });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
@@ -111,7 +111,6 @@ app.get("/logout", (req, res) => {
 });
 
 app.get("/user", accounts.checkAuthenticated, (req, res) => {
-  console.log("Session:", req.session); // Log session data
   res.json({ username: req.user.username, id: req.user.id });
 });
 
@@ -214,5 +213,5 @@ app.get(
 
 ////////////////////////////////////////////////////////// activate server
 app.listen(process.env.SERVER_PORT, () => {
-  console.log("listen to server 3001");
+  console.log("listen to server");
 });

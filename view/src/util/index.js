@@ -1,6 +1,5 @@
 export const handleRegister = async (username, password) => {
   try {
-    console.log(process.env.REACT_APP_BACKEND_URL);
     const response = await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/register`,
       {
@@ -14,9 +13,9 @@ export const handleRegister = async (username, password) => {
 
     if (response.ok) {
       const result = await response.json();
-      console.log(result.message); //
+      return result.message;
     } else {
-      throw new Error("Register failed!");
+      return null
     }
   } catch (error) {
     console.error("Error:", error);
@@ -35,11 +34,8 @@ export const handleLogin = async (username, password) => {
     });
     const result = await response.json();
     if (response.ok) {
-      console.log(result.message);
-      console.log(result.user);
       return { message: result.message, authenticate: true }; // Login success!
     } else {
-      console.log(result.message);
       return { message: result.message, authenticate: false };
     }
   } catch (error) {
@@ -108,8 +104,7 @@ export const handleLogout = async () => {
       }
     );
     if (response.ok) {
-      const result = await response.json();
-      console.log(result.message);
+      return
     } else {
       throw new Error("log out fail");
     }
@@ -202,9 +197,7 @@ export const getCartDetail = async (cartId) => {
 
 export const removeItem = async (cartId, productId) => {
   try {
-    console.log(
-      `Remove item process, cartId: ${cartId}, productId: ${productId}`
-    );
+    
     const response = await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/cart/${cartId}`,
       {

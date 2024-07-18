@@ -17,7 +17,6 @@ const Catalog = () => {
   }, [ ]);
 
   useEffect(() => {
-    console.log(`cate id : ${selectedCategory}`);
     const fetchProducts = async () => {
       if (!selectedCategory) {
         const allProductsArray = await fetchAllProducts();
@@ -25,7 +24,6 @@ const Catalog = () => {
       } else {
         const productsArray = await fetchProductsFromCategory(selectedCategory);
         setProductsArray(productsArray);
-        console.log(productsArray);
       }
     };
     fetchProducts();

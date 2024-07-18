@@ -45,12 +45,10 @@ const Account = () => {
 
   useEffect(() => {
     if (!userInfo || !loggedIn) {
-      console.log("not logged in, useless to get account detail");
       return;
     }
     const getAccountDetail = async () => {
       const fetchedDetail = await fetchAccountDetail(userInfo.id);
-      console.log(fetchedDetail);
       setAccountDetail(fetchedDetail);
       setFormValues({
         fullName: fetchedDetail.full_name,

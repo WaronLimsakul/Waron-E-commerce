@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Alert,
   Box,
   Button,
   Card,
@@ -21,8 +22,10 @@ import Logo from "../waron-logo-zip-file/png/logo-no-background.png";
 function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = UseNavigate();
+  // const navigate = UseNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState(false);
+  const [message, setMessage] = useState(null);
 
   const handleClickEye = () => {
     setShowPassword(!showPassword);
@@ -30,8 +33,13 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await handleRegister(username, password);
-    navigate("/login");
+    const message = await handleRegister(username, password);
+    if (!message) {
+      setErrors(true);
+      setMessage("Something went wrong, please try again");
+      return;
+    }
+    setMessage(message);
   };
 
   return (
@@ -47,7 +55,7 @@ function Register() {
           justifyContent="center"
           height="80vh"
           sx={{
-            display: { xs: 'none', lg: 'flex' }, // Hide on xs screens, show on md and up
+            display: { xs: "none", lg: "flex" }, // Hide on xs screens, show on md and up
           }}
         >
           <Box
@@ -71,9 +79,14 @@ function Register() {
                 }}
               >
                 <CardContent>
-                  <Typography variant="h4" fontWeight="500">
+                  <Typography variant="h4" fontWeight="500" gutterBottom>
                     Please register
                   </Typography>
+                  {message && (
+                    <Alert severity={errors ? "error" : "success"}>
+                      {message}
+                    </Alert>
+                  )}
                 </CardContent>
                 <CardActions style={{ flexDirection: "column", width: "100%" }}>
                   <form onSubmit={handleSubmit}>
@@ -85,14 +98,13 @@ function Register() {
                         style={{ margin: "2%", width: "75%" }}
                         onChange={(e) => {
                           setUsername(e.target.value);
-                          console.log(e.target.value);
                         }}
                         required
                       />
                       <TextField
                         id="password"
                         label="Password"
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         variant="filled"
                         style={{ margin: "2%", width: "75%" }}
                         onChange={(e) => {

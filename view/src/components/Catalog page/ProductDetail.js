@@ -29,8 +29,7 @@ const ProductDetail = ({
   const { id, name, price, description, picture_url } = product;
   const handleAddToCart = async () => {
     if (quantity > 0) {
-      const response = await addItemToCart(cartId, id, quantity); // this is detail
-      console.log(response);
+      await addItemToCart(cartId, id, quantity); // this is detail
       setProductsInCart(productsInCart + quantity);
       setQuantity(0);
       onClose();

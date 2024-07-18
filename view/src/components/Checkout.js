@@ -53,7 +53,6 @@ const CheckoutForm = () => {
 
   useEffect(() => {
     if (!activeCart || !loggedIn) {
-      console.log("don't have cart or not logged in, useless to checkout");
       return;
     }
     setTotalPrice(activeCart.total_price);
@@ -99,9 +98,7 @@ const CheckoutForm = () => {
         const result = await response.json();
         setClientSecret(result.clientSecret);
         setPaymentIntentId(result.paymentIntentId);
-        console.log("Charging", 100 * totalPrice, "cents");
-        // console.log("Client secret:", result.clientSecret);
-        // console.log("payment intent id:", result.paymentIntentId);
+
         currentClientSecret = result.clientSecret;
 
         // Check if the new clientSecret is set before proceeding
@@ -118,8 +115,6 @@ const CheckoutForm = () => {
         return;
       }
     }
-    // console.log("client secret after set:", clientSecret);
-    // console.log("Current clientSecret being used:", currentClientSecret);
 
     // 2. Confirm card payment
     const cardNumberElement = elements.getElement(CardNumberElement);
