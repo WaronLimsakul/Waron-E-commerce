@@ -11,6 +11,7 @@ const { body, validationResult } = require("express-validator");
 
 ////////////////////////////////////////////////////////// session and server configuration
 const app = express();
+const PORT = process.env.PORT || 3001;
 
 app.use(helmet());
 
@@ -212,6 +213,6 @@ app.get(
 );
 
 ////////////////////////////////////////////////////////// activate server
-app.listen(process.env.SERVER_PORT, () => {
+app.listen(PORT, () => {
   console.log("listen to server");
 });
