@@ -8,6 +8,8 @@ const cors = require("cors");
 require("dotenv").config();
 const helmet = require("helmet");
 const { body, validationResult } = require("express-validator");
+const pgSession = require("connect-pg-simple")(session);
+const { Pool } = require('pg');
 
 ////////////////////////////////////////////////////////// session and server configuration
 const app = express();
@@ -20,9 +22,18 @@ app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true })); // work
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+const pool = new Pool({
+  user: process.env.PG_USER,
+  host: process.env.PG_HOST,
+  database: process.env.PG_DATABASE,
+  password: process.env.PG_PASSWORD,
+  port: process.env.PG_PORT,
+});
+
 app.use(
   // check this setting
   session({
+    store: new pgSession({pool: pool}),
     secret: process.env.SESSION_SECRET,
     cookie: {
       maxAge: 1000 * 60 * 30,
@@ -214,5 +225,5 @@ app.get(
 
 ////////////////////////////////////////////////////////// activate server
 app.listen(PORT, () => {
-  console.log("listen to server");
+  console.log("listen to server on port", PORT);
 });

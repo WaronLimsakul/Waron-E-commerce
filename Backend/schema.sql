@@ -28,7 +28,7 @@ CREATE SEQUENCE public.accounts_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.accounts_id_seq OWNER TO postgres;
+--ALTER TABLE public.accounts_id_seq OWNER TO postgres;
 
 SET default_tablespace = '';
 
@@ -47,7 +47,7 @@ CREATE TABLE public.accounts (
 );
 
 
-ALTER TABLE public.accounts OWNER TO postgres;
+--ALTER TABLE public.accounts OWNER TO postgres;
 
 --
 -- Name: accounts_detail; Type: TABLE; Schema: public; Owner: postgres
@@ -62,7 +62,7 @@ CREATE TABLE public.accounts_detail (
 );
 
 
-ALTER TABLE public.accounts_detail OWNER TO postgres;
+--ALTER TABLE public.accounts_detail OWNER TO postgres;
 
 --
 -- Name: accounts_detail_account_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -77,7 +77,7 @@ CREATE SEQUENCE public.accounts_detail_account_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.accounts_detail_account_id_seq OWNER TO postgres;
+--ALTER TABLE public.accounts_detail_account_id_seq OWNER TO postgres;
 
 --
 -- Name: accounts_detail_account_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -98,7 +98,7 @@ CREATE SEQUENCE public.carts_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.carts_id_seq OWNER TO postgres;
+--ALTER TABLE public.carts_id_seq OWNER TO postgres;
 
 --
 -- Name: carts; Type: TABLE; Schema: public; Owner: postgres
@@ -115,7 +115,7 @@ CREATE TABLE public.carts (
 );
 
 
-ALTER TABLE public.carts OWNER TO postgres;
+--ALTER TABLE public.carts OWNER TO postgres;
 
 --
 -- Name: categories; Type: TABLE; Schema: public; Owner: postgres
@@ -127,7 +127,7 @@ CREATE TABLE public.categories (
 );
 
 
-ALTER TABLE public.categories OWNER TO postgres;
+--ALTER TABLE public.categories OWNER TO postgres;
 
 --
 -- Name: categories_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -142,7 +142,7 @@ CREATE SEQUENCE public.categories_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.categories_id_seq OWNER TO postgres;
+--ALTER TABLE public.categories_id_seq OWNER TO postgres;
 
 --
 -- Name: categories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -163,7 +163,7 @@ CREATE SEQUENCE public.orders_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.orders_id_seq OWNER TO postgres;
+--ALTER TABLE public.orders_id_seq OWNER TO postgres;
 
 --
 -- Name: orders; Type: TABLE; Schema: public; Owner: postgres
@@ -192,7 +192,7 @@ CREATE SEQUENCE public.products_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.products_id_seq OWNER TO postgres;
+--ALTER TABLE public.products_id_seq OWNER TO postgres;
 
 --
 -- Name: products; Type: TABLE; Schema: public; Owner: postgres
@@ -209,7 +209,7 @@ CREATE TABLE public.products (
 );
 
 
-ALTER TABLE public.products OWNER TO postgres;
+--ALTER TABLE public.products OWNER TO postgres;
 
 --
 -- Name: products_carts; Type: TABLE; Schema: public; Owner: postgres
@@ -238,7 +238,7 @@ CREATE TABLE public.products_orders (
 );
 
 
-ALTER TABLE public.products_orders OWNER TO postgres;
+--ALTER TABLE public.products_orders OWNER TO postgres;
 
 --
 -- Name: random; Type: TABLE; Schema: public; Owner: postgres
@@ -250,7 +250,7 @@ CREATE TABLE public.random (
 );
 
 
-ALTER TABLE public.random OWNER TO postgres;
+--ALTER TABLE public.random OWNER TO postgres;
 
 --
 -- Name: random_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -265,7 +265,15 @@ CREATE SEQUENCE public.random_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.random_id_seq OWNER TO postgres;
+--ALTER TABLE public.random_id_seq OWNER TO postgres;
+
+CREATE TABLE "session" (
+  "sid" VARCHAR NOT NULL COLLATE "default",
+  "sess" JSON NOT NULL,
+  "expire" TIMESTAMP(6) NOT NULL,
+  PRIMARY KEY ("sid")
+) WITH (OIDS=FALSE);
+
 
 --
 -- Name: random_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres

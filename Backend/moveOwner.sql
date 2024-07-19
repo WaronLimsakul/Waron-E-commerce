@@ -1,0 +1,16 @@
+ALTER TABLE public.accounts_id_seq OWNER TO waron_e_commerce_user;
+ALTER TABLE public.accounts OWNER TO waron_e_commerce_user;
+ALTER TABLE public.accounts_detail OWNER TO waron_e_commerce_user;
+ALTER TABLE public.accounts_detail_account_id_seq OWNER TO waron_e_commerce_user;
+ALTER TABLE public.carts_id_seq OWNER TO waron_e_commerce_user;
+ALTER TABLE public.carts OWNER TO waron_e_commerce_user;
+ALTER TABLE public.categories OWNER TO waron_e_commerce_user;
+ALTER TABLE public.categories_id_seq OWNER TO waron_e_commerce_user;
+ALTER TABLE public.orders_id_seq OWNER TO waron_e_commerce_user;
+ALTER TABLE public.orders OWNER TO waron_e_commerce_user;
+ALTER TABLE public.products_id_seq OWNER TO waron_e_commerce_user;
+ALTER TABLE public.products OWNER TO waron_e_commerce_user;
+ALTER TABLE public.products_carts OWNER TO waron_e_commerce_user;
+ALTER TABLE public.products_orders OWNER TO waron_e_commerce_user;
+ALTER TABLE public.random OWNER TO waron_e_commerce_user;
+ALTER TABLE public.random_id_seq OWNER TO waron_e_commerce_user;
