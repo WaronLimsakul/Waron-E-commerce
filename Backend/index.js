@@ -85,6 +85,7 @@ app.post(
           return res.status(500).json({ message: "Login failed" });
         }
         res.json({ message: "Login successful" }); // still not deserialize yet
+        console.log('Session after login:', req.session);
       });
     })(req, res, next);
   }

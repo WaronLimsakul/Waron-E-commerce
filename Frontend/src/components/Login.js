@@ -8,6 +8,7 @@ import {
   CardContent,
   InputAdornment,
   IconButton,
+  Alert,
 } from "@mui/material";
 import React, { useContext, useState } from "react";
 import { Link, useNavigate as UseNavigate } from "react-router-dom";
@@ -23,14 +24,17 @@ const Login = () => {
   const navigate = UseNavigate();
   const { handleLoginResponse } = useContext(SessionContext);
   const [showPassword, setShowPassword] = useState(false);
+  const [pending, setPending] = useState(false);
 
   const handleClickEye = () => {
     setShowPassword(!showPassword);
   };
 
   const handleSubmit = async (e) => {
+    setPending(true);
     e.preventDefault();
     const response = await handleLogin(username, password);
+    setPending(false);
     handleLoginResponse(response);
     if (response.authenticate) {
       navigate("/catalog");
@@ -67,6 +71,11 @@ const Login = () => {
                         <Typography variant="body1" color="error">
                           Incorrect username or password. Please try again
                         </Typography>
+                      )}
+                      {pending && (
+                        <Alert severity="info" style={{ width: "75%" }}>
+                          Logging in, please wait...
+                        </Alert>
                       )}
                       <TextField
                         id="username"

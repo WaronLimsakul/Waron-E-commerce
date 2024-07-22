@@ -12,7 +12,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Link, useNavigate as UseNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { handleGoogleLogin, handleRegister } from "../util";
 import GoogleIcon from "@mui/icons-material/Google";
 import Visibility from "@mui/icons-material/Visibility";
@@ -22,18 +22,20 @@ import Logo from "../waron-logo-zip-file/png/logo-no-background.png";
 function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  // const navigate = UseNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState(false);
   const [message, setMessage] = useState(null);
+  const [pending, setPending] = useState(false);
 
   const handleClickEye = () => {
     setShowPassword(!showPassword);
   };
 
   const handleSubmit = async (e) => {
+    setPending(true);
     e.preventDefault();
     const message = await handleRegister(username, password);
+    setPending(false);
     if (!message) {
       setErrors(true);
       setMessage("Something went wrong, please try again");
@@ -82,6 +84,11 @@ function Register() {
                   <Typography variant="h4" fontWeight="500" gutterBottom>
                     Please register
                   </Typography>
+                  {pending && (
+                        <Alert severity="info" style={{ width: "75%" }}>
+                          Registering, please wait...
+                        </Alert>
+                      )}
                   {message && (
                     <Alert severity={errors ? "error" : "success"}>
                       {message}
