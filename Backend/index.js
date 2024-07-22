@@ -40,7 +40,6 @@ app.use(
       secure: process.env.NODE_ENV === "production", // true in production
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       httpOnly: true,
-      domain: process.env.NODE_ENV === "production" ? "waron-e-commerce-front-end.onrender.com" : undefined
     }, //when samesite: none => must secure : true
     resave: false,
     saveUninitialized: false,
