@@ -40,6 +40,7 @@ app.use(
       secure: process.env.NODE_ENV === "production", // true in production
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       httpOnly: true,
+      domain: ".waron-limsakul.com"
     }, //when samesite: none => must secure : true
     resave: false,
     saveUninitialized: false,
