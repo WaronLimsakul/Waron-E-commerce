@@ -1,12 +1,8 @@
-let api = process.env.REACT_APP_BACKEND_URL;
-if (process.env.NODE_ENV === 'production') {
-  api = '/api';
-} 
 
 export const handleRegister = async (username, password) => {
   try {
     const response = await fetch(
-      `${api}/register`,
+      `${process.env.REACT_APP_BACKEND_URL}/register`,
       {
         method: "POST",
         headers: {
@@ -29,7 +25,7 @@ export const handleRegister = async (username, password) => {
 
 export const handleLogin = async (username, password) => {
   try {
-    const response = await fetch(`${api}/login`, {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/login`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -49,13 +45,13 @@ export const handleLogin = async (username, password) => {
 };
 
 export const handleGoogleLogin = () => {
-  window.location.href = `${api}/auth/google`;
+  window.location.href = `${process.env.REACT_APP_BACKEND_URL}/auth/google`;
 };
 
 export const fetchAllProducts = async () => {
   try {
     const response = await fetch(
-      `${api}/products`,
+      `${process.env.REACT_APP_BACKEND_URL}/products`,
       {
         method: "GET",
       }
@@ -68,7 +64,7 @@ export const fetchAllProducts = async () => {
 
 export const fetchUser = async () => {
   try {
-    const response = await fetch(`${api}/user`, {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/user`, {
       method: "GET",
       credentials: "include",
     });
@@ -88,7 +84,7 @@ export const fetchUser = async () => {
 export const fetchProductsFromCategory = async (id) => {
   try {
     const response = await fetch(
-      `${api}/products?categoryId=${id}`,
+      `${process.env.REACT_APP_BACKEND_URL}/products?categoryId=${id}`,
       {
         method: "GET",
       }
@@ -102,7 +98,7 @@ export const fetchProductsFromCategory = async (id) => {
 export const handleLogout = async () => {
   try {
     const response = await fetch(
-      `${api}/logout`,
+      `${process.env.REACT_APP_BACKEND_URL}/logout`,
       {
         method: "GET",
         credentials: "include",
@@ -121,7 +117,7 @@ export const handleLogout = async () => {
 export const getCartInCatalog = async (id) => {
   try {
     const response = await fetch(
-      `${api}/accounts/${id}/cart`,
+      `${process.env.REACT_APP_BACKEND_URL}/accounts/${id}/cart`,
       {
         method: "GET",
         credentials: "include",
@@ -142,7 +138,7 @@ export const getCartInCatalog = async (id) => {
 
 export const createCartInCatalog = async () => {
   try {
-    const response = await fetch(`${api}/cart`, {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/cart`, {
       method: "POST",
       credentials: "include",
     });
@@ -161,7 +157,7 @@ export const createCartInCatalog = async () => {
 export const addItemToCart = async (cartId, productId, quantity) => {
   try {
     const response = await fetch(
-      `${api}/cart/${cartId}`,
+      `${process.env.REACT_APP_BACKEND_URL}/cart/${cartId}`,
       {
         method: "POST",
         credentials: "include",
@@ -186,7 +182,7 @@ export const getCartDetail = async (cartId) => {
   // fetch from new route that will join producst and products_carts
   try {
     const response = await fetch(
-      `${api}/accounts/${cartId}/cart/detail`,
+      `${process.env.REACT_APP_BACKEND_URL}/accounts/${cartId}/cart/detail`,
       { method: "GET", credentials: "include" }
     );
     if (response.ok) {
@@ -204,7 +200,7 @@ export const removeItem = async (cartId, productId) => {
   try {
     
     const response = await fetch(
-      `${api}/cart/${cartId}`,
+      `${process.env.REACT_APP_BACKEND_URL}/cart/${cartId}`,
       {
         method: "DELETE",
         credentials: "include",
@@ -227,7 +223,7 @@ export const removeItem = async (cartId, productId) => {
 export const getOrderHistory = async () => {
   try {
     const response = await fetch(
-      `${api}/orders`,
+      `${process.env.REACT_APP_BACKEND_URL}/orders`,
       {
         method: "GET",
         credentials: "include",
@@ -248,7 +244,7 @@ export const updateAccount = async (accountId, formValues) => {
   try {
     const { fullName, email, dateOfBirth, address } = formValues;
     const response = await fetch(
-      `${api}/accounts/${accountId}`,
+      `${process.env.REACT_APP_BACKEND_URL}/accounts/${accountId}`,
       {
         method: "PUT",
         credentials: "include",
@@ -276,7 +272,7 @@ export const updateAccount = async (accountId, formValues) => {
 export const fetchAccountDetail = async (id) => {
   try {
     const response = await fetch(
-      `${api}/accounts/${id}`,
+      `${process.env.REACT_APP_BACKEND_URL}/accounts/${id}`,
       {
         method: "GET",
         credentials: "include",
