@@ -42,6 +42,10 @@ This project is an e-commerce web application designed to provide a seamless onl
 - **Database Hosting:**
   - Render: The PostgreSQL database is hosted on Render, ensuring data security and availability.
 
+- **Live App:**
+  - [Waron E-Commerce Client](https://waron-e-commerce-client.waron-limsakul.com/): Explore the live client-side of the e-commerce application.
+
+
 ## Usage
 
 - **Register and Login:**
@@ -56,6 +60,10 @@ This project is an e-commerce web application designed to provide a seamless onl
 
 - **Order History:**
   - View order history with detailed product information.
+
+## Disclaimer
+
+**Please Note:** The payment process in this application is simulated for learning purposes. No actual transactions are processed. This feature is intended to demonstrate integration with Stripe and simulate payment workflows for educational and development purposes only.
 
 ## Privacy Policy
 
