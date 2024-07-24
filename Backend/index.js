@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 3001;
 
 app.use(helmet());
 
-// app.enable("trust proxy");
+app.enable("trust proxy");
 
 app.use(cors({  credentials: true, origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_2], exposedHeaders: ["Set-Cookie"] })); // work
 
