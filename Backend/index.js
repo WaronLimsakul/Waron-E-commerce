@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 3001;
 
 app.use(helmet());
 
-app.use(cors({ origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_2], credentials: true })); // work
+app.use(cors({ origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_2], credentials: true, exposedHeaders: ["Set-Cookie"] })); // work
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
