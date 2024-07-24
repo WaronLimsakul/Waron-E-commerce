@@ -17,7 +17,9 @@ const PORT = process.env.PORT || 3001;
 
 app.use(helmet());
 
-app.use(cors({ origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_2], credentials: true, exposedHeaders: ["Set-Cookie"] })); // work
+app.enable("trust proxy");
+
+app.use(cors({  credentials: true, origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_2], exposedHeaders: ["Set-Cookie"] })); // work
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -35,15 +37,16 @@ app.use(
   session({
     store: new pgSession({pool: pool}),
     secret: process.env.SESSION_SECRET,
-    cookie: {
-      maxAge: 1000 * 60 * 30,
-      secure: process.env.NODE_ENV === "production", // true in production
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      httpOnly: true,
-      domain: process.env.NODE_ENV === "production" ? ".waron-limsakul.com" : undefined,
-    }, //when samesite: none => must secure : true
     resave: false,
     saveUninitialized: false,
+    name: "session-cookie",
+    cookie: {
+      maxAge: 1000 * 60 * 30,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // true in production
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      domain: process.env.NODE_ENV === "production" ? ".waron-limsakul.com" : undefined,
+    }, //when samesite: none => must secure : true
   })
 );
 
