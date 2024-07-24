@@ -11,8 +11,9 @@ This project is an e-commerce web application designed to provide a seamless onl
 - Shopping Cart functionality
 - Order History tracking
 - Secure Payment Processing with Stripe
-- Responsive design with dark theme and green accents
+- Responsive design with default dark theme and green accents
 - Robust server-side validation and security measures
+- Theme switching floating button from light and dark mode
 
 ## Technologies Used
 
