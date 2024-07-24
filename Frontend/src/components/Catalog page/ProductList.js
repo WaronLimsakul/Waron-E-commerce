@@ -15,7 +15,7 @@ const ProductList = (props) => {
   };
 
   return (
-    <Box sx={{ width: "100%", marginTop: "2%", marginBottom: "5%" }}>
+    <Box sx={{ width: "100%", marginTop: "2%", marginBottom: "5%", paddingTop: "70px" }}>
       <Grid container spacing={2}>
         <Grid item xs={0.5} sm={1} />
         <Grid item xs={11} sm={10}>

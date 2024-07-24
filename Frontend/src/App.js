@@ -14,7 +14,7 @@ import { UserProvider } from "./components/Contexts/UserContext";
 import Account from "./components/Account";
 import { SessionProvider } from "./components/Contexts/SessionContext";
 
-function App() {
+function App({ toggleTheme, themeMode }) {
   return (
     <SessionProvider>
       <Router>
@@ -26,7 +26,7 @@ function App() {
             path="/catalog"
             element={
               <UserProvider>
-                <Catalog />
+                <Catalog toggleTheme={toggleTheme} themeMode={themeMode}/>
               </UserProvider>
             }
           />

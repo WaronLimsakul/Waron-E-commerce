@@ -37,7 +37,7 @@ const ResponsiveAutocomplete = styled(Autocomplete)(({ theme }) => ({
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
   padding: theme.spacing(1),
-  color: theme.palette.primary.light,
+  color: theme.palette.primary.main,
 }));
 
 const TopBar = (props) => {
@@ -125,7 +125,13 @@ const TopBar = (props) => {
 
   return (
     <Box>
-      <AppBar position="static" style={{ backgroundColor: "#1c1c1e" }}>
+      <AppBar position="fixed" sx={{
+          top: 0,
+          left: 0,
+          width: '100%',
+          bgcolor: (theme) => theme.palette.background.paper, // Use the paper background color for contrast
+          color: (theme) => theme.palette.text.primary, // Use primary text color
+        }} >
         <Grid
           container
           width="100%"
@@ -142,6 +148,7 @@ const TopBar = (props) => {
                   size="large"
                   color="inherit"
                   sx={{ mr: "3%", ml: "3%" }}
+                  onClick={() => {window.scrollTo({top: 0, behavior: 'smooth'})}}
                 >
                   <Box
                     component="img"
