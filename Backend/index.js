@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 3001;
 
 app.use(helmet());
 
-app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true })); // work
+app.use(cors({ origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_2], credentials: true })); // work
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -40,7 +40,7 @@ app.use(
       secure: process.env.NODE_ENV === "production", // true in production
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       httpOnly: true,
-      domain: ".waron-limsakul.com"
+      domain: process.env.NODE_ENV === "production" ? ".waron-limsakul.com" : undefined,
     }, //when samesite: none => must secure : true
     resave: false,
     saveUninitialized: false,

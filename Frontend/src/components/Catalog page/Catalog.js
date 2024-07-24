@@ -14,7 +14,7 @@ const Catalog = () => {
     if (loggedIn) {
       debouncedGetCart();
     }
-  }, [ ]);
+  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {
