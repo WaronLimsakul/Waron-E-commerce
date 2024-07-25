@@ -94,9 +94,13 @@ const ProductDetail = ({
           <Button
             variant="outlined"
             disabled
-            style={{
-              color: "white",
+            sx={{
               fontSize: { xs: "0.7rem", sm: "0.875rem" },
+              border: '2px solid',
+              '&:disabled': {
+                color: theme => theme.palette.text.primary,
+                borderColor: theme => theme.palette.primary.main,
+              },
             }}
           >
             {quantity}
