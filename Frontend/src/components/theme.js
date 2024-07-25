@@ -30,6 +30,15 @@ const darkTheme = createTheme({
   typography: {
     fontFamily: "Roboto, Arial, sans-serif",
   },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: `
+        body {
+          transition: background-color 0.4s ease, color 0.4s ease;
+        }
+      `,
+    },
+  }
 });
 
 const lightTheme = createTheme({
@@ -62,6 +71,15 @@ const lightTheme = createTheme({
       contrastText: '#FFFFFF',
     },
   },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: `
+        body {
+          transition: background-color 0.4s ease, color 0.4s ease;
+        }
+      `,
+    },
+  }
 });
 
 export { darkTheme, lightTheme };
