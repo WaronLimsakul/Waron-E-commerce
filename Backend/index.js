@@ -152,8 +152,8 @@ app.put(
   accounts.checkAuthenticated,
   accounts.isOwner,
   [
-    body('fullName').notEmpty().trim(),
-    body('dateOfBirth').notEmpty(),
+    body('full_name').notEmpty().trim(),
+    body('date_of_birth').notEmpty(),
     body('address').notEmpty().trim(),
     body('email').notEmpty().isEmail().normalizeEmail(),
   ],
