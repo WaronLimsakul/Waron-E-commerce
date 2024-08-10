@@ -46,6 +46,9 @@ This project is an e-commerce web application designed to provide a seamless onl
 - **Live App:**
   - [Waron E-Commerce Client](https://waron-e-commerce-client.waron-limsakul.com/): Explore the live client-side of the e-commerce application.
 
+- **Please Note:**
+  - This application uses a free instance type of Render hosting service. As a result. The server may take up to 50 seconds in order to spin up from inactivity.
+  - The free istance type database of this application will be expired after 17th August 2024. If anyone needs to fully experience the app after the date, please contact me at poonro@gmail.com.
 
 ## Usage
 
@@ -103,10 +106,6 @@ We welcome contributions to improve this project. Please follow these steps to c
 3. Make your changes and commit them: `git commit -m 'Add some feature'`.
 4. Push to the branch: `git push origin feature/your-feature-name`.
 5. Submit a pull request.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
 ## Acknowledgments
 
