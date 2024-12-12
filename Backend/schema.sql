@@ -432,22 +432,35 @@ ALTER TABLE ONLY public.products_orders
     ADD CONSTRAINT products_orders_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(id);
 
 
-ALTER TABLE public.accounts_id_seq OWNER TO waron_e_commerce_user;
-ALTER TABLE public.accounts OWNER TO waron_e_commerce_user;
-ALTER TABLE public.accounts_detail OWNER TO waron_e_commerce_user;
-ALTER TABLE public.accounts_detail_account_id_seq OWNER TO waron_e_commerce_user;
-ALTER TABLE public.carts_id_seq OWNER TO waron_e_commerce_user;
-ALTER TABLE public.carts OWNER TO waron_e_commerce_user;
-ALTER TABLE public.categories OWNER TO waron_e_commerce_user;
-ALTER TABLE public.categories_id_seq OWNER TO waron_e_commerce_user;
-ALTER TABLE public.orders_id_seq OWNER TO waron_e_commerce_user;
-ALTER TABLE public.orders OWNER TO waron_e_commerce_user;
-ALTER TABLE public.products_id_seq OWNER TO waron_e_commerce_user;
-ALTER TABLE public.products OWNER TO waron_e_commerce_user;
-ALTER TABLE public.products_carts OWNER TO waron_e_commerce_user;
-ALTER TABLE public.products_orders OWNER TO waron_e_commerce_user;
-ALTER TABLE public.random OWNER TO waron_e_commerce_user;
-ALTER TABLE public.random_id_seq OWNER TO waron_e_commerce_user;
+ALTER TABLE public.accounts_id_seq OWNER TO "WaronEC_DB_owner";
+ALTER TABLE public.accounts OWNER TO "WaronEC_DB_owner";
+ALTER TABLE public.accounts_detail OWNER TO "WaronEC_DB_owner";
+ALTER TABLE public.accounts_detail_account_id_seq OWNER TO "WaronEC_DB_owner";
+ALTER TABLE public.carts_id_seq OWNER TO "WaronEC_DB_owner";
+ALTER TABLE public.carts OWNER TO "WaronEC_DB_owner";
+ALTER TABLE public.categories OWNER TO "WaronEC_DB_owner";
+ALTER TABLE public.categories_id_seq OWNER TO "WaronEC_DB_owner";
+ALTER TABLE public.orders_id_seq OWNER TO "WaronEC_DB_owner";
+ALTER TABLE public.orders OWNER TO "WaronEC_DB_owner";
+ALTER TABLE public.products_id_seq OWNER TO "WaronEC_DB_owner";
+ALTER TABLE public.products OWNER TO "WaronEC_DB_owner";
+ALTER TABLE public.products_carts OWNER TO "WaronEC_DB_owner";
+ALTER TABLE public.products_orders OWNER TO "WaronEC_DB_owner";
+ALTER TABLE public.random OWNER TO "WaronEC_DB_owner";
+ALTER TABLE public.random_id_seq OWNER TO "WaronEC_DB_owner";
+
+-- Insert data into the categories table
+INSERT INTO categories (id, name) VALUES
+(1, 'Grocery'),
+(2, 'Pet'),
+(3, 'Electronics'),
+(4, 'Fashion'),
+(5, 'Home & Kitchen'),
+(6, 'Beauty & Personal Care'),
+(7, 'Sports & Outdoors'),
+(8, 'Toys & Games'),
+(9, 'Health & Wellness'),
+(10, 'Automotive');
 
 -- Insert data into the products table
 INSERT INTO products (id, name, price, stock, description, category_id, picture_url) VALUES
@@ -476,18 +489,6 @@ INSERT INTO products (id, name, price, stock, description, category_id, picture_
 (24, 'Treadmill', 500.00, 10, 'High-quality treadmill with adjustable speed and incline. Ideal for home workouts.', 9, 'https://images-cdn.ubuy.com.sa/643e9c34d1bf6230947ee9d2-home-foldable-treadmill-with-incline.jpg'),
 (25, 'Car Wax', 15.00, 50, 'High-quality car wax for a brilliant shine and long-lasting protection. Easy to apply and buff.', 10, 'https://i5.walmartimages.com/seo/Hs-Ultra-Gloss-29-916-Car-Wax-Carnuba-Long-Lasting-with-PTFE-Resins-16-oz_612e7206-437c-4df1-8d9b-0b3a2c3e7cf1.2b1ef2f97195cc0f315436bf9e70af1f.jpeg');
 
--- Insert data into the categories table
-INSERT INTO categories (id, name) VALUES
-(1, 'Grocery'),
-(2, 'Pet'),
-(3, 'Electronics'),
-(4, 'Fashion'),
-(5, 'Home & Kitchen'),
-(6, 'Beauty & Personal Care'),
-(7, 'Sports & Outdoors'),
-(8, 'Toys & Games'),
-(9, 'Health & Wellness'),
-(10, 'Automotive');
 --
 -- PostgreSQL database dump complete
 --
