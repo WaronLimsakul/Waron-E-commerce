@@ -6,29 +6,32 @@ This project is an e-commerce web application designed to provide a seamless onl
 
 ## Features
 
-- User Authentication (Google OAuth and traditional email/password login)
+- User Authentication (Google OAuth and traditional username/password login)
 - Product Catalog with detailed descriptions
 - Shopping Cart functionality
 - Order History tracking
 - Secure Payment Processing with Stripe
-- Responsive design with default dark theme and green accents
+- Responsive design with default dark theme and green accents (It also has a light mode)
 - Robust server-side validation and security measures
 - Theme switching floating button from light and dark mode
 
 ## Technologies Used
 
 - **Front-end:**
-  - React: A JavaScript library for building user interfaces
+
+  - React: JS library. To be precise, the project is built with create-react-app.
   - Material-UI: A popular React UI framework
   - React Router: For handling routing in the application
 
 - **Back-end:**
-  - Node.js: A JavaScript runtime built on Chrome's V8 JavaScript engine
+
+  - Node.js: For running JS server.
   - Express: A fast, unopinionated, minimalist web framework for Node.js
   - PostgreSQL: A powerful, open-source relational database
   - Passport.js: Authentication middleware for Node.js
 
 - **Payment Processing:**
+
   - Stripe: A suite of payment APIs that powers commerce for businesses of all sizes
 
 - **Security:**
@@ -38,42 +41,45 @@ This project is an e-commerce web application designed to provide a seamless onl
 ## Deployment
 
 - **Hosting Platform:**
+
   - Render: The web application is deployed and hosted on Render, providing a reliable and scalable infrastructure.
 
 - **Database Hosting:**
-  - Render: The PostgreSQL database is hosted on Render, ensuring data security and availability.
+
+  - Neon: Waron-e-commerce data now migrated to neon (they offered free database hosting).
 
 - **Live App:**
+
   - [Waron E-Commerce Client](https://waron-e-commerce-client.waron-limsakul.com/): Explore the live client-side of the e-commerce application.
 
 - **Please Note:**
   - This application uses a free instance type of Render hosting service. As a result. The server may take up to 50 seconds in order to spin up from inactivity.
-  - The free istance type database of this application will be expired after 17th August 2024. If anyone needs to fully experience the app after the date, please contact me at poonro@gmail.com.
+  - The payment process in this application is simulated for learning purposes. No actual transactions are processed. This feature is intended to demonstrate integration with Stripe and simulate payment workflows for educational and development purposes only.
 
 ## Usage
 
 - **Register and Login:**
+
   - Users can register with an email and password or use Google OAuth for authentication.
   - The login form includes an eye icon to toggle password visibility.
 
 - **Product Catalog:**
+
   - Browse the product catalog, click on product cards to view details in a pop-up.
 
 - **Shopping Cart:**
+
   - Add products to the shopping cart, view cart contents, and proceed to checkout.
 
 - **Order History:**
   - View order history with detailed product information.
-
-## Disclaimer
-
-**Please Note:** The payment process in this application is simulated for learning purposes. No actual transactions are processed. This feature is intended to demonstrate integration with Stripe and simulate payment workflows for educational and development purposes only.
 
 ## Privacy Policy
 
 ### Information Collection and Use
 
 We collect and use the following information for authentication purposes when you sign in using Google OAuth:
+
 - Google ID
 - Email address
 
@@ -87,7 +93,7 @@ Your Google ID and email address are shared with Google solely for authenticatio
 
 ### User Rights
 
-You have the right to access, update, and delete your information stored within our application. 
+You have the right to access, update, and delete your information stored within our application.
 
 ### Contact Us
 
@@ -116,7 +122,8 @@ We welcome contributions to improve this project. Please follow these steps to c
 - [Material-UI](https://mui.com/)
 - [PostgreSQL](https://www.postgresql.org/)
 - [Render](https://render.com/)
+- [Neon](https://console.neon.tech/)
 
 ---
 
-Thank you for using my e-commerce application. I hope you have a great shopping experience!
+Thank you for using my e-commerce application. Hope you have a good experience.
