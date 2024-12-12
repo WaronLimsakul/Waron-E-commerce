@@ -240,15 +240,12 @@ CREATE TABLE public.products_orders (
 
 --ALTER TABLE public.products_orders OWNER TO postgres;
 
---
--- Name: random; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.random (
-    id integer NOT NULL,
-    name character varying(200)
+-- New table for storing session.
+CREATE TABLE public.session (
+    sid VARCHAR NOT NULL PRIMARY KEY,
+    sess JSON NOT NULL,
+    expire TIMESTAMP(6) WITHOUT TIME ZONE NOT NULL
 );
-
 
 --ALTER TABLE public.random OWNER TO postgres;
 
